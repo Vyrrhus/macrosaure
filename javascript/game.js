@@ -1,10 +1,9 @@
 // GAME
+var GAME_ON = false;
+GAME.init();
 
-img_score = new Image();
-img_score.src = 'assets/score.png';
-
-var play = Object.create(GAME);
-GAME.run = function(time) {
-    this.SCORE += 0.05 ;
-    Score.drawScore(CANVAS.TEXT, CONTEXT.TEXT, img_score, this.SCORE);
-};
+document.addEventListener('click', function(event) {
+    if (GAME_ON) {return;}
+    GAME.start();
+    GAME_ON=true;
+})
