@@ -18,7 +18,6 @@ var CONTEXT = {
 var IMG = {
     SCORE:  'assets/score.png',
     OVER:   'assets/over.png',
-    GROUND: 'assets/ground.png'
 };
 
 // CANVAS SIZE
@@ -51,13 +50,14 @@ var GAME = {
             image.src = IMG[element];
             IMG[element] = image;
         }
-        
-        /* conditionner la suite via un on_ready (vérifier que tout a bien été chargé quoi) */
+        BACKGROUND.init(CONTEXT.BACKGROUND);
+//        OBSTACLE.init(CONTEXT.OBSTACLE);
+//        PLAYER.init(CONTEXT.MACRON);
     },
     start: function() {
         var self = this;
         this.START_TIME = getTimeNow();
-        Background.init(CONTEXT.BACKGROUND, IMG.GROUND);
+        
         requestAnimationFrame(function (time) {self.animate(time);});
     },
     tick: function(time) {
@@ -87,7 +87,8 @@ var GAME = {
             return;
         }
         this.tick(time);
-        Background.move(CONTEXT.BACKGROUND, IMG.GROUND, this.FPS);
+        BACKGROUND.run(this.FPS);
+//        Background.move(CONTEXT.BACKGROUND, this.FPS);
         this.setScore();
         if (this.SCORE > this.HIGH_SCORE && this.TRY_NUMBER > 1) {
             this.setHighScore();
@@ -110,8 +111,9 @@ var GAME = {
     },
     setDifficulty: function(score) {
         var rate = 1 + 10*(Math.tanh(score/500-3)+1);
+        BACKGROUND.set_velocity(rate);
 //        console.log(rate);
-        Background.setVelocity(rate);
+//        Background.setVelocity(rate);
     },
     setScore: function() {
         this.SCORE += 0.1;
