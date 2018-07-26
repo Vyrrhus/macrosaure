@@ -51,7 +51,7 @@ var OBSTACLES = {
         BLOCKED: 50, // PX
         FROM_LAST: 0,
     },
-    HITBOX_STATUS: true,
+    HITBOX_STATUS: false,
     init: function(ctx) {
         this.CONTEXT = ctx;
         img = new Image();
