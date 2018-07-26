@@ -44,6 +44,7 @@ var GAME = {
     SCORE:      0,
     HIGH_SCORE: 0,
     TRY_NUMBER: 1,
+    PAUSE: false,
     init: function() {
         for (var element in IMG) {
             image = new Image();
@@ -51,8 +52,8 @@ var GAME = {
             IMG[element] = image;
         }
         BACKGROUND.init(CONTEXT.BACKGROUND);
-//        OBSTACLE.init(CONTEXT.OBSTACLE);
-//        PLAYER.init(CONTEXT.MACRON);
+        OBSTACLES.init(CONTEXT.OBSTACLE);
+        PLAYER.init(CONTEXT.MACRON);
     },
     start: function() {
         var self = this;
@@ -86,9 +87,26 @@ var GAME = {
             this.over();
             return;
         }
+        if (this.PAUSE) {
+            return;
+        }
         this.tick(time);
         BACKGROUND.run(this.FPS);
-//        Background.move(CONTEXT.BACKGROUND, this.FPS);
+        OBSTACLES.run(this.FPS);
+        PLAYER.run(this.FPS);
+        
+        var player_box = PLAYER.get_hitbox();
+        var obstacle_box = OBSTACLES.get_hitbox();
+        for (var i = 0 ; i < obstacle_box.length ; i++) {
+            var e = obstacle_box[i];
+            if (player_box.x < e.x + e.w 
+                && player_box.x + player_box.w > e.x 
+                && player_box.y < e.y + e.h 
+                && player_box.h + player_box.y > e.y) {
+                this.GAME_OVER = true;
+            }
+        }
+        
         this.setScore();
         if (this.SCORE > this.HIGH_SCORE && this.TRY_NUMBER > 1) {
             this.setHighScore();
@@ -107,13 +125,15 @@ var GAME = {
         this.SCORE = 0;
         this.TRY_NUMBER++;
         CONTEXT.TEXT.clearRect(WIDTH/2-115, HEIGHT/3,230,67)
+        PLAYER.restart();
+        OBSTACLES.restart();
         this.start();
     },
     setDifficulty: function(score) {
         var rate = 1 + 10*(Math.tanh(score/500-3)+1);
         BACKGROUND.set_velocity(rate);
-//        console.log(rate);
-//        Background.setVelocity(rate);
+        OBSTACLES.set_velocity(rate);
+        PLAYER.set_velocity(rate);
     },
     setScore: function() {
         this.SCORE += 0.1;
@@ -125,5 +145,9 @@ var GAME = {
         if (this.GAME_OVER) {
             this.over();
         }
+    },
+    toggle_hitbox: function() {
+        PLAYER.toggle_hitbox();
+        OBSTACLES.toggle_hitbox();
     }
 };
