@@ -1,101 +1,134 @@
-var Player = {
-
-    /* coordinate : [x,y,w,h,??,??] pour chaque sprite à utiliser*/
-
-    init: function (canvas,image,top) {
-
-        this.sprite = Object.create(Sprite);   //关联精灵对象
-
-        this.spriteSheetPainter = Object.create(SpriteSheetPainter); //关联静态图片绘制对象
-
-
-
-        this.sprite.name = 'pterosaur';
-
-        this.sprite.painter = this.spriteSheetPainter;
-
-        this.spriteSheetPainter.cells = this.coordinate;
-
-        this.spriteSheetPainter.image = image;
-
-        this.sprite.behaviors = [this.move, this.flyInplace];
-
-
-
-        this.sprite.top = top;
-
-        this.sprite.left = canvas.width;
-
-
-
-        this.move.self = this;
-
-        this.sprite.initShape(this.sprite.left+6,this.sprite.top+5,this.coordinate[0].drawHeight,this.coordinate[0].drawHeight);
-
+var PLAYER = {
+    CONTEXT: '',
+    FILE: 'assets/macron.png',
+    IMG: 'assets/macron.png',
+    OFFSET_X: 40,
+    OFFSET_Y: HEIGHT-68,
+    VELOCITY: 5, // image par seconde
+    TIME: 0,
+    Y: 0,
+    JUMP:  {
+        STATUS: false,
+        UP_TIME: 30,
+        DOWN_TIME: 20,
+        HEIGHT: 60,
+        FRAMES: [
+            {num:0, x:84, y:0, w:20, h:38, sw:20, sh:38}
+        ],
+        NB_FRAMES: '',
+        NUM: 0
     },
-
-    //设置仙人掌移动速度
-
-    setVelocity: function (rate) {
-
-        this.move.velocityX = 400*rate;
-
+    RUN: {
+        STATUS: true,
+        FRAMES: [
+            {num:0, x:0, y:0, w:19, h:38, sw:19, sh:38},
+            {num:2, x:21, y:0, w:19, h:38, sw:19, sh:38},
+            {num:3, x:42, y:0, w:19, h:38, sw:19, sh:38},
+            {num:4, x:63, y:0, w:19, h:38, sw:19, sh:38}
+        ],
+        NB_FRAMES: '',
+        NUM: 0
     },
-
-    reset: function () {
-
-        this.move.velocityX = 400;
-
+    HITBOX: {x:5, y:0, w:13, h:31},
+    HITBOX_STATUS: false,
+    init: function(ctx) {
+        this.CONTEXT = ctx;
+        img = new Image();
+        img.src = this.FILE;
+        this.IMG = img;
+        this.JUMP.NB_FRAMES = this.JUMP.FRAMES.length;
+        this.RUN.NB_FRAMES = this.RUN.FRAMES.length;
     },
-
-    /*************************************************************************************
-
-     *                           行为属性
-
-     *************************************************************************************/
-
-    move:{
-
-        velocityX: 400, //速度略微比地面快一点
-
-
-
-        execute:function (sprite,context,time,frameTime) {
-
-            var delta = 0;
-
-            delta = this.velocityX*frameTime;
-
-            sprite.left -= delta;
-
-            sprite.shape.move(-delta,0);
-
+    draw: function(frame, y) {
+        this.CONTEXT.drawImage(this.IMG,
+                               frame.x,
+                               frame.y,
+                               frame.w,
+                               frame.h,
+                               this.OFFSET_X,
+                               this.OFFSET_Y - y,
+                               frame.sw,
+                               frame.sh);
+        if (this.HITBOX_STATUS) {
+            var hitbox = this.HITBOX;
+            this.CONTEXT.beginPath();
+            this.CONTEXT.strokeStyle="red";
+            this.CONTEXT.rect(this.OFFSET_X + hitbox.x, 
+                              this.OFFSET_Y - y + hitbox.y, 
+                              hitbox.w, 
+                              hitbox.h);
+            this.CONTEXT.stroke();
         }
-
     },
-
-
-
-    flyInplace:{
-
-        lastAdvance: 0,
-
-        PAGE_FLIP_INTERVAL: 200, //200ms 播放一帧图像
-
-
-
-        execute:function (sprite,context,time,frameTime) {
-
-            if (time - this.lastAdvance > this.PAGE_FLIP_INTERVAL){
-
-                sprite.painter.advance();
-
-                this.lastAdvance = time;
-
+    switch_status: function() {
+        this.TIME = 0;
+        this.JUMP.STATUS = !this.JUMP.STATUS;
+        this.RUN.STATUS = !this.RUN.STATUS;
+    },
+    jump_animate: function(vel) {
+        var height = 0;
+        if (this.TIME < this.JUMP.UP_TIME) {
+            height = Math.trunc(this.JUMP.HEIGHT * this.TIME / this.JUMP.UP_TIME);
+        } else if (this.TIME < this.JUMP.UP_TIME + this.JUMP.DOWN_TIME) {
+            height = Math.trunc(this.JUMP.HEIGHT * (1 - (this.TIME - this.JUMP.UP_TIME) / this.JUMP.DOWN_TIME));
+        } else {
+            this.switch_status();
+            this.run_animate(vel);
+            return;
+        }
+        if (this.TIME % vel ==0) {
+            this.JUMP.NUM++;
+            if (this.JUMP.NUM >= this.JUMP.NB_FRAMES) {
+                this.JUMP.NUM = 0;
             }
-
         }
-
+        this.Y = height;
+        this.draw(this.JUMP.FRAMES[this.JUMP.NUM], height);    
+    },
+    run_animate: function(vel) {
+        if (this.TIME >= vel) {
+            this.TIME = 0;
+            this.RUN.NUM++;
+            if (this.RUN.NUM >= this.RUN.NB_FRAMES) {
+                this.RUN.NUM = 0;
+            }
+        }
+        this.Y = 0;
+        this.draw(this.RUN.FRAMES[this.RUN.NUM], 0);
+    },
+    get_hitbox: function() {
+        var hitbox = {
+            x: this.OFFSET_X + this.HITBOX.x,
+            y: this.OFFSET_Y -this.Y + this.HITBOX.y,
+            w: this.HITBOX.w,
+            h: this.HITBOX.h
+        };
+        return hitbox;
+    },
+    run: function(fps) {
+        this.CONTEXT.clearRect(0,0,WIDTH,HEIGHT);
+        this.TIME++;
+        var vel = Math.trunc(fps / this.VELOCITY);
+        if (this.JUMP.STATUS) {
+            this.jump_animate(vel);
+        } else if (this.RUN.STATUS) {
+            this.run_animate(vel);
+        }
+    },
+    restart: function() {
+        this.TIME = 0;
+        this.Y = 0;
+        if (this.JUMP.STATUS) {
+            this.switch_status();
+        }
+        this.JUMP.NUM = 0;
+        this.RUN.NUM = 0;
+    },
+    set_velocity: function(rate) {
+            this.VELOCITY = 5*rate;
+        },
+    toggle_hitbox: function() {
+        this.HITBOX_STATUS = !this.HITBOX_STATUS;
     }
-
 };
+
