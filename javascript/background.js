@@ -4,10 +4,13 @@ var BACKGROUND = {
         SKY: {
             NAME: 'SKY',
             NUM: 0,
-            VELOCITY: 0,
-            IMG: 'assets/fk/sky_HD.png',
+            VELOCITY: -5, // PX/s
+            FILE: 'assets/sky.png',
+            IMG: 'assets/sky.png',
             FRAMES: [
-                {num:1, x:0, y:0, w:4, h:256, sw:4, sh:256},        // TILE 1
+                {num:1, x:0, y:0, w:46, h:39, sw:46, sh:39},        // TILE 1
+                {num:2, x:47, y:0, w:46, h:39, sw:46, sh:39},       // TILE 2
+                {num:3, x:94, y:0, w:46, h:39, sw:46, sh:39}        // TILE 3
             ],
             NB_FRAMES: '',
             CONTENT: [],
@@ -17,114 +20,7 @@ var BACKGROUND = {
             },
             NB_FRAMES_BLOCKED: 0,
             offset_Y: function() {
-                return 0; 
-            },
-            get_transY: function() {
-                return 0;
-            },
-            is_continuous: function() {
-                return true;
-            },
-            get_likelihood: function() {
-                return true;
-            },
-            set_velocity: function(rate) {
-                return;
-            },
-            set_blocked: function(velocity) {
-                return 100;
-            }
-        },
-        MOUNTAIN: {
-            NAME: 'MOUNTAIN',
-            NUM: 1,
-            VELOCITY: 0,
-            IMG: 'assets/fk/tilesmap.png',
-            FRAMES: [
-                {num:1, x:1535, y:832, w:512, h:192, sw:512, sh:192}
-            ],
-            NB_FRAMES: '',
-            CONTENT: [],
-            OFFSET: {
-                x:0,
-                y:0
-            },
-            NB_FRAMES_BLOCKED: 0,
-            offset_Y: function() {
-                return 0; 
-            },
-            get_transY: function() {
-                return 0;
-            },
-            is_continuous: function() {
-                return true;
-            },
-            get_likelihood: function() {
-                return true;
-            },
-            set_velocity: function(rate) {
-                return;
-            },
-            set_blocked: function(velocity) {
-                return 100;
-            }
-        },
-        BUILD_BACK: {
-            NAME: 'BUILD_BACK',
-            NUM: 2,
-            VELOCITY: -20,
-            IMG: 'assets/fk/tilesmap.png',
-            FRAMES: [
-                {num:1, x:1022, y:926, w:512, h:97, sw:512, sh:97}
-            ],
-            NB_FRAMES: '',
-            CONTENT: [],
-            OFFSET: {
-                x:0,
-                y:0
-            },
-            NB_FRAMES_BLOCKED: 0,
-            offset_Y: function() {
-                return 159; 
-            },
-            get_transY: function() {
-                return 0;
-            },
-            is_continuous: function() {
-                return true;
-            },
-            get_likelihood: function() {
-                return true;
-            },
-            set_velocity: function(rate) {
-                return -5*rate;
-            },
-            set_blocked: function(velocity) {
-                return 100;
-            }
-        },
-        BUILD_FRONT: {
-            NAME: 'BUILD_FRONT',
-            NUM: 3,
-            VELOCITY: -100,
-            IMG: 'assets/fk/tilesmap.png',
-            FRAMES: [
-                {num:1, x:0, y:0, w:128, h:256, sw:128, sh:256},
-                {num:2, x:130, y:0, w:384, h:256, sw:384, sh:256},
-                {num:3, x:515, y:0, w:384, h:256, sw:384, sh:256},
-                {num:4, x:899, y:0, w:544, h:256, sw:544, sh:256},
-                {num:5, x:1443, y:0, w:177, h:256, sw:177, sh:256},
-                {num:6, x:1621, y:0, w:305, h:256, sw:305, sh:256},
-            ],
-            NB_FRAMES: '',
-            CONTENT: [],
-            OFFSET: {
-                x:0,
-                y:0
-            },
-            NB_FRAMES_BLOCKED: 0,
-            offset_Y: function() {
-                return 0; 
+                return Math.floor(Math.random()*60) + 20; 
             },
             get_transY: function() {
                 return 0;
@@ -134,26 +30,33 @@ var BACKGROUND = {
             },
             get_likelihood: function() {
                 var p = Math.random();
-                if (p > 0.4) {
+                if (p > 0.9) {
                     return true;
                 } else {
                     return false;
                 }
             },
             set_velocity: function(rate) {
-                return -100*rate;
+                this.VELOCITY = -5 * rate;
             },
             set_blocked: function(velocity) {
-                return Math.trunc(Math.random()*25);
+                return 200;
             }
         },
-        UP_PAVEMENT: {
-            NAME: 'UP_PAVEMENT',
-            NUM: 4,
-            VELOCITY: -100,
-            IMG: 'assets/fk/tilesmap.png',
+        GROUND: {
+            NAME: 'GROUND',
+            NUM: 1,
+            VELOCITY: -50, //PX/s
+            FILE: 'assets/ground.png',
+            IMG: 'assets/ground.png',
             FRAMES: [
-                {num:1, x:1022, y:897, w:512, h:29, sw:512, sh:29}
+                {num: 1, x:0, y:0, w:196, h:14, sw:196, sh:14},         // TILE 1
+                {num: 2, x:197, y:0, w:201, h:14, sw:201, sh:14},       // TILE 2
+                {num: 3, x:399, y:0, w:237, h:14, sw:237, sh:14},       // TILE 3
+                {num: 4, x:637, y:0, w:113, h:14, sw:113, sh:14},       // TILE 4
+                {num: 5, x:708, y:0, w:81, h:14, sw:81, sh:14},         // TILE 5
+                {num: 6, x:760, y:0, w:156, h:14, sw:156, sh:14},       // TILE 6
+                {num: 7, x:1044, y:0, w:158, h:14, sw:158, sh:14}       // TILE 7
             ],
             NB_FRAMES: '',
             CONTENT: [],
@@ -163,7 +66,7 @@ var BACKGROUND = {
             },
             NB_FRAMES_BLOCKED: 0,
             offset_Y: function() {
-                return 256; 
+                return HEIGHT-40; 
             },
             get_transY: function() {
                 return 0;
@@ -175,156 +78,12 @@ var BACKGROUND = {
                 return true;
             },
             set_velocity: function(rate) {
-                return -100*rate;
+                this.VELOCITY = -50 * rate;
             },
             set_blocked: function(velocity) {
                 return 100;
             }
         },
-        DOWN_PAVEMENT: {
-            NAME: 'DOWN_PAVEMENT',
-            NUM: 5,
-            VELOCITY: -100,
-            IMG: 'assets/fk/tilesmap.png',
-            FRAMES: [
-                {num:1, x:1, y:846, w:32, h:32, sw:32, sh:32}
-            ],
-            NB_FRAMES: '',
-            CONTENT: [],
-            OFFSET: {
-                x:0,
-                y:0
-            },
-            NB_FRAMES_BLOCKED: 0,
-            offset_Y: function() {
-                return 285; 
-            },
-            get_transY: function() {
-                return 0;
-            },
-            is_continuous: function() {
-                return true;
-            },
-            get_likelihood: function() {
-                return true;
-            },
-            set_velocity: function(rate) {
-                return -100*rate;
-            },
-            set_blocked: function(velocity) {
-                return 100;
-            }
-        },
-        ROAD: {
-            NAME: 'ROAD',
-            NUM: 6,
-            VELOCITY: -100,
-            IMG: 'assets/fk/tilesmap.png',
-            FRAMES: [
-                {num:1, x:130, y:926, w:64, h:64, sw:64, sh:64}
-            ],
-            NB_FRAMES: '',
-            CONTENT: [],
-            OFFSET: {
-                x:0,
-                y:0
-            },
-            NB_FRAMES_BLOCKED: 0,
-            offset_Y: function() {
-                return 317; 
-            },
-            get_transY: function() {
-                return 0;
-            },
-            is_continuous: function() {
-                return true;
-            },
-            get_likelihood: function() {
-                return true;
-            },
-            set_velocity: function(rate) {
-                return -100*rate;
-            },
-            set_blocked: function(velocity) {
-                return 100;
-            }
-        },
-        TREE: {
-            NAME: 'TREE',
-            NUM: 7,
-            VELOCITY: -100,
-            IMG: 'assets/fk/trees.png',
-            FRAMES: [
-                {num:1, x:0, y:0, w:256, h:255, sw:256, sh:255},
-                {num:2, x:0, y:257, w:256, h:254, sw:256, sh:254},
-                {num:3, x:0, y:513, w:256, h:315, sw:256, sh:315}
-            ],
-            NB_FRAMES: '',
-            CONTENT: [],
-            OFFSET: {
-                x:0,
-                y:0
-            },
-            NB_FRAMES_BLOCKED: 0,
-            offset_Y: function(frame) {
-                return 270 - frame.h;
-            },
-            get_transY: function() {
-                return 0;
-            },
-            is_continuous: function() {
-                return false;
-            },
-            get_likelihood: function() {
-                var p = Math.random();
-                if (p > 0.2) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            },
-            set_velocity: function(rate) {
-                return -100*rate;
-            },
-            set_blocked: function(velocity) {
-                return Math.trunc(Math.random()*100+30);
-            }
-        },
-        LAMP: {
-            NAME: 'LAMP',
-            NUM: 8,
-            VELOCITY: -100,
-            IMG: 'assets/fk/tilesmap.png',
-            FRAMES: [
-                {num:1, x:463, y:903, w:32, h:120, sw:32, sh:120}
-            ],
-            NB_FRAMES: '',
-            CONTENT: [],
-            OFFSET: {
-                x:0,
-                y:0
-            },
-            NB_FRAMES_BLOCKED: 0,
-            offset_Y: function() {
-                return 179; 
-            },
-            get_transY: function() {
-                return 0;
-            },
-            is_continuous: function() {
-                return false;
-            },
-            get_likelihood: function() {
-                return true;
-            },
-            set_velocity: function(rate) {
-                return -100*rate;
-            },
-            set_blocked: function(velocity) {
-                return 300;
-            }
-        }
     },
     CALQUE: [],
     init: function(ctx) {
@@ -333,7 +92,7 @@ var BACKGROUND = {
             var calque = this.DATA[element];
             this.CALQUE[calque.NUM] = calque;
             img = new Image();
-            img.src = calque.IMG;
+            img.src = calque.FILE;
             this.CALQUE[calque.NUM].IMG = img;
             this.CALQUE[calque.NUM].NB_FRAMES = calque.FRAMES.length;
             this.CONTEXT.clearRect(0,0,WIDTH,HEIGHT);
