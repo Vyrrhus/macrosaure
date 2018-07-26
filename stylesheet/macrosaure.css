@@ -2,8 +2,14 @@
 
 body, html {height: 100%}
 
+#title {
+    left: 25%;
+}
+
 #background, #obstacle, #macron, #text {
     position: absolute;
+    left: 25%;
+    right: 25%;
 }
 
 #background {
