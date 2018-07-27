@@ -20,6 +20,18 @@ var IMG = {
     OVER:   'assets/over.png',
 };
 
+// SETTINGS
+var SETTINGS = {
+    VITESSE: 500,
+    NB_OBS_MAX: 3,
+    VIT_OBS: -50,
+    MIN_DIST: 150,
+    PROB_OBS: 80,
+    BLOCK_OBS: 50,
+    HAUTEUR_SAUT: 60,
+    TIME_SAUT: 1,
+}
+
 // CANVAS SIZE
 var WIDTH   = CANVAS.BACKGROUND.width;
 var HEIGHT  = CANVAS.BACKGROUND.height;
@@ -83,7 +95,9 @@ var GAME = {
     animate: function(time) {
         var self = this;
         if (this.GAME_OVER) {
-            this.setHighScore();
+            if (this.SCORE > this.HIGH_SCORE) {
+                this.setHighScore();
+            }
             this.over();
             return;
         }
@@ -130,7 +144,7 @@ var GAME = {
         this.start();
     },
     setDifficulty: function(score) {
-        var rate = 1 + 10*(Math.tanh(score/500-3)+1);
+        var rate = 1 + 10*(Math.tanh(score/SETTINGS.VITESSE));
         BACKGROUND.set_velocity(rate);
         OBSTACLES.set_velocity(rate);
         PLAYER.set_velocity(rate);

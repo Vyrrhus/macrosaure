@@ -57,11 +57,16 @@ var OBSTACLES = {
         img = new Image();
         img.src = this.FILE;
         this.IMG = img;
-        this.DISTANCE.BLOCKED = this.DISTANCE.MIN;
-        this.DISTANCE.FROM_OBS = this.DISTANCE.MIN/2;
         for (var element in this.DATA) {
             this.NB_OBS++;
         }
+        this.NB_OBS_MAX = SETTINGS.NB_OBS_MAX;
+        this.DISTANCE.MIN = SETTINGS.MIN_DIST;
+        this.DISTANCE.BLOCKED = SETTINGS.BLOCK_OBS;
+        this.VELOCITY = SETTINGS.VIT_OBS;
+        this.DISTANCE.BLOCKED = this.DISTANCE.MIN;
+        this.DISTANCE.FROM_OBS = this.DISTANCE.MIN/2;
+        
     },
     draw: function() {
         for (var i = 0 ; i < this.CALQUE.length ; i++) {
@@ -105,12 +110,11 @@ var OBSTACLES = {
         }
     },
     add_obs: function() {
-        var p = Math.random();
-        console.log(`${p} > 0.4 : add obstacle?`);
-        if (p > 0.8) {
+        var p = 100*Math.random();
+        console.log(p);
+        if (p > SETTINGS.PROB_OBS) {
             this.DISTANCE.FROM_OBS = 0;
             var p = Math.ceil(Math.random()*this.NB_OBS_MAX);
-            console.log(`${p} : nb obstacle?`);
             var x = WIDTH;
             for (var i = 1 ; i <= p ; i++) {
                 var num = Math.ceil(Math.random() * this.NB_OBS);
@@ -175,9 +179,15 @@ var OBSTACLES = {
         this.CALQUE = [];
         this.DISTANCE.FROM_OBS = 0;
         this.DISTANCE.FROM_LAST = 0;
+        this.NB_OBS_MAX = SETTINGS.NB_OBS_MAX;
+        this.DISTANCE.MIN = SETTINGS.MIN_DIST;
+        this.DISTANCE.BLOCKED = SETTINGS.BLOCK_OBS;
+        this.VELOCITY = SETTINGS.VIT_OBS;
+        this.DISTANCE.BLOCKED = this.DISTANCE.MIN;
+        this.DISTANCE.FROM_OBS = this.DISTANCE.MIN/2;
     },
     set_velocity: function(rate) {
-        this.VELOCITY = -200 * rate;
+        this.VELOCITY = SETTINGS.VIT_OBS * rate;
     },
     toggle_hitbox: function() {
         this.HITBOX_STATUS = !this.HITBOX_STATUS;

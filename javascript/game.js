@@ -1,19 +1,16 @@
 var LOCK = false;
 GAME.init();
 
-document.addEventListener('click', function(event) {
-    if (!LOCK) {
-            GAME.start();
-            LOCK = true;
-        } else {
-            if (!PLAYER.JUMP.STATUS) {
-                PLAYER.switch_status();
-            }
-        }
-    if (GAME.GAME_OVER) {
-        GAME.restart();
-    }
-})
+//document.addEventListener('click', function(event) {
+//    if (!LOCK) {
+//            GAME.start();
+//            LOCK = true;
+//        } else {
+//            if (!PLAYER.JUMP.STATUS) {
+//                PLAYER.switch_status();
+//            }
+//        }
+//})
 
 document.addEventListener('keydown', function(event) {
     if (event.keyCode == 32) {
