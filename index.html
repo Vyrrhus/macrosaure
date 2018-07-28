@@ -4,82 +4,30 @@
 <head>
     <meta charset="utf-8"/>
 	<link rel="stylesheet" type="text/css" href="stylesheet/macrosaure.css">
-<!--    <link rel="stylesheet" tpe="text/css" href="stylesheet/bootstrap.css">-->
-    
     <title>Macrosaure</title>
     <link href = "#" rel="icon">
 </head>
   
 
 <body id="body">
-<div class="container">
-
-    <!--FORM ELEMENTS-->
-    <div id="title" class="row">
-        <h4>Appuyer sur la barre d'espace pour jouer</h4>
-        <h4>Cliquer sur "VALIDER" pour modifier les settings avant de rejouer.</h4>
-        <h5>Vous pouvez aussi mettre en pause via ECHAP ou "p" et afficher la hitbox via "t"</h5>
-    </div>
     
+    <h1>PRESS SPACE BAR TO PLAY</h1>
     <!--CANVAS ELEMENTS-->
-    <div class="row">
+    <div id="canvas">
 	<canvas id="background" width="600px" height="200px"></canvas>
     <canvas id="obstacle" width="600px" height="200px"></canvas>
 	<canvas id="macron" width="600px" height="200px"></canvas>
 	<canvas id="text" width="600px" height="200px"></canvas>
     </div>
-    <!--FORM ELEMENTS-->
-    <div class="row">
-        <h3>Settings</h3>
-        <form id="form" class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-            <div id="vitesse">
-                <label class="col-lg-8 col-md-8 col-sm-8 col-xs-8 control-label" for="input-vitesse">Accélération du défilement (plus le chiffre est grand, plus c'est lent) </label>
-                <input id="input-vitesse" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" type="text" placeholder="500">
-            </div>
-            <div id="vitesse-obs">
-                <label class="col-lg-8 col-md-8 col-sm-8 col-xs-8 control-label" for="input-vitesse-obs">Vitesse initiale des obs </label>
-                <input id="input-vitesse-obs" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" type="text" placeholder="50">
-            </div>
-            <div id="nb-obs-max">
-                <label class="col-lg-8 col-md-8 col-sm-8 col-xs-8 control-label" for="input-nb-obs-max">Nb max d'obstacles à la suite</label>
-                <input id="input-nb-obs-max" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" type="text" placeholder="3">
-            </div>
-            <div id="min-dist">
-                <label class="col-lg-8 col-md-8 col-sm-8 col-xs-8 control-label" for="input-min-dist">Distance min entre 2 groupes d'obstacles</label>
-                <input id="input-min-dist" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" type="text" placeholder="150">
-            </div>
-            <div id="prob-obs">
-                <label class="col-lg-8 col-md-8 col-sm-8 col-xs-8 control-label" for="input-prob-obs">Probabilité d'avoir un obstacle (%) tous les... </label>
-                <input id="input-prob-obs" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" type="text" placeholder="80">
-            </div>
-            <div id="block-obs">
-                <label class="col-lg-8 col-md-8 col-sm-8 col-xs-8 control-label" for="input-block-obs">... x pixels : </label>
-                <input id="input-block-obs" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" type="text" placeholder="50">
-            </div>
-            <div id="hauteur-saut">
-                <label class="col-lg-8 col-md-8 col-sm-8 col-xs-8 control-label" for="input-hauteur-saut">Hauteur du saut (pixels)</label>
-                <input id="input-hauteur-saut" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" type="text" placeholder="60">
-            </div>
-            <div id="time-saut">
-                <label class="col-lg-8 col-md-8 col-sm-8 col-xs-8 control-label" for="input-time-saut">Durée du saut (s)</label>
-                <input id="input-time-saut" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" type="text" placeholder="1">
-            </div>
-            <div>
-                <button id="submit" type="button" class="form-control">VALIDER</button>
-            </div>
-        </form>
-    
-    </div>
 	
 <!--JAVASCRIPT SOURCES-->
+    <script src="javascript/config.js"></script>
     <script src="javascript/engine.js"></script>
     <script src="javascript/background.js"></script>
+    <script src="javascript/obstacle.js"></script>
 	<script src="javascript/player.js"></script>
-	<script src="javascript/obstacle.js"></script>
 	<script src="javascript/score.js"></script>
-	<script src="javascript/form.js"></script>
     <script src="javascript/game.js"></script>
     
-</div>
 </body>
 </html>
