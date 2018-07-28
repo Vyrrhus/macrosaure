@@ -82,8 +82,8 @@ var SETTINGS = {
         ANIMATION: {
             JUMP_IPS: 8,       // image par seconde
             RUN_IPS: 4,         // image par seconde
-            JUMP_HEIGHT: 60,    // pixels
-            JUMP_TIME: 1        // secondes
+            JUMP_HEIGHT: 50,    // pixels
+            JUMP_TIME: 0.6        // secondes
         },
         OFFSET: {
             x: 40,
@@ -94,14 +94,14 @@ var SETTINGS = {
         DISTANCE: {
             BLOCKED: 10         // pixel
         },
-        VELOCITY: -60,          // pixel par seconde
+        VELOCITY: -20,          // pixel par seconde
         GAP_COEFF: 1.1,
         WIDTH_COEFF: 0.5,
         GENERATOR_COEFF: 0.3,
         NB_OBS_MAX: 5
     },
     GROUND: {
-        VELOCITY: -40           // pixel par seconde
+        VELOCITY: -200           // pixel par seconde
     },
     SKY: {
         VELOCITY: -5            // pixel par seconde
