@@ -1,55 +1,46 @@
 var PLAYER = {
-    CONTEXT: '',
-    FILE: 'assets/macron.png',
-    IMG: 'assets/macron.png',
-    OFFSET: {
-        x: 40,
-        y: HEIGHT - 68
-    },
-    HEIGHT: 0,
+    OFFSET: SETTINGS.PLAYER.OFFSET,
     JUMP:  {
-        STATUS: false,
-        JUMP_TIME: 1, // s
-        MAX_HEIGHT: 60, // PX
-        ACCELERATION: 0,
-        VELOCITY: 0,
-        TIME: 0, // s   
-        ANIMATION_VELOCITY: 10, // image par seconde
-        ANIMATION_TIME: 0,
-        FRAMES: [
-            {num:0, x:84, y:0, w:20, h:38, sw:20, sh:38},
-            {num:0, x:105, y:0, w:20, h:38, sw:20, sh:38},
-            {num:0, x:128, y:0, w:20, h:38, sw:20, sh:38},
-        ],
-        NB_FRAMES: '',
-        NUM: 0
+        STATUS: true,
+        JUMP_TIME: SETTINGS.PLAYER.ANIMATION.JUMP_TIME,
+        MAX_HEIGHT: SETTINGS.PLAYER.ANIMATION.JUMP_HEIGHT,  
+        ANIMATION_VELOCITY: SETTINGS.PLAYER.ANIMATION.JUMP_IPS,
+        FRAMES: FRAMES.PLAYER.JUMP,
     },
     RUN: {
-        STATUS: true,
-        ANIMATION_VELOCITY: 5, // image par seconde
-        ANIMATION_TIME: 0,
-        FRAMES: [
-            {num:0, x:0, y:0, w:19, h:38, sw:19, sh:38},
-            {num:1, x:21, y:0, w:19, h:38, sw:19, sh:38},
-            {num:2, x:42, y:0, w:19, h:38, sw:19, sh:38},
-            {num:3, x:63, y:0, w:19, h:38, sw:19, sh:38}
-        ],
-        NB_FRAMES: '',
-        NUM: 0
+        STATUS: false,
+        ANIMATION_VELOCITY: SETTINGS.PLAYER.ANIMATION.RUN_IPS,
+        FRAMES: FRAMES.PLAYER.RUN,
     },
     HITBOX: {x:5, y:0, w:13, h:31},
     HITBOX_STATUS: false,
     init: function(ctx) {
+        // Context
         this.CONTEXT = ctx;
-        img = new Image();
-        img.src = this.FILE;
-        this.IMG = img;
+        
+        // Frames
         this.JUMP.NB_FRAMES = this.JUMP.FRAMES.length;
         this.RUN.NB_FRAMES = this.RUN.FRAMES.length;
-        this.JUMP.MAX_HEIGHT = SETTINGS.HAUTEUR_SAUT;
-        this.JUMP.JUMP_TIME = SETTINGS.TIME_SAUT;
+        
+        // Jump settings
         this.JUMP.ACCELERATION = - 8 * this.JUMP.MAX_HEIGHT / Math.pow(this.JUMP.JUMP_TIME, 2);
         this.JUMP.VELOCITY = 4 * this.JUMP.MAX_HEIGHT / this.JUMP.JUMP_TIME;
+        this.JUMP.TIME = 0;
+        
+        // Initialize other useful settings
+        this.HEIGHT = 0;
+        this.JUMP.NUM = 0;
+        this.RUN.NUM = 0;
+        this.JUMP.ANIMATION_TIME = 0;
+        this.RUN.ANIMATION_TIME = 0;
+        
+        // Image
+        img = new Image();
+        img.src = FILES.PLAYER;
+        this.IMG = img;
+        this.IMG.onload = function() {
+            PLAYER.draw(PLAYER.RUN.FRAMES[0]);
+        }
     },
     draw: function(frame) {
         this.CONTEXT.drawImage(this.IMG,
@@ -62,15 +53,17 @@ var PLAYER = {
                                frame.sw,
                                frame.sh);
         if (this.HITBOX_STATUS) {
-            var hitbox = this.HITBOX;
-            this.CONTEXT.beginPath();
-            this.CONTEXT.strokeStyle="red";
-            this.CONTEXT.rect(this.OFFSET.x + hitbox.x, 
-                              this.OFFSET.y - this.HEIGHT + hitbox.y, 
-                              hitbox.w, 
-                              hitbox.h);
-            this.CONTEXT.stroke();
+            this.draw_hitbox();
         }
+    },
+    draw_hitbox: function() {
+        this.CONTEXT.beginPath();
+        this.CONTEXT.strokeStyle="red";
+        this.CONTEXT.rect(this.OFFSET.x + this.HITBOX.x,
+                          this.OFFSET.y - this.HEIGHT + this.HITBOX.y,
+                          this.HITBOX.w,
+                          this.HITBOX.h);
+        this.CONTEXT.stroke();
     },
     switch_status: function() {
         this.JUMP.STATUS = !this.JUMP.STATUS;
@@ -126,25 +119,18 @@ var PLAYER = {
             this.run_animate(fps);
         }
     },
-    restart: function() {
-        this.HEIGHT = 0;
-        this.JUMP.TIME = 0;
-        this.JUMP.ANIMATION_TIME = 0;
-        this.RUN.ANIMATION_TIME = 0;
+    reset: function() {
         if (this.JUMP.STATUS) {
             this.switch_status();
         }
-        this.JUMP.NUM = 0;
-        this.RUN.NUM = 0;
-        this.JUMP.MAX_HEIGHT = SETTINGS.HAUTEUR_SAUT;
-        this.JUMP.JUMP_TIME = SETTINGS.TIME_SAUT;
-        this.JUMP.ACCELERATION = - 8 * this.JUMP.MAX_HEIGHT / Math.pow(this.JUMP.JUMP_TIME, 2);
-        this.JUMP.VELOCITY = 4 * this.JUMP.MAX_HEIGHT / this.JUMP.JUMP_TIME;
+        this.init(this.CONTEXT);
     },
-    set_velocity: function(rate) {
-            this.JUMP.ANIMATION_VELOCITY = 10*(1+rate/10);
-            this.RUN.ANIMATION_VELOCITY = 5 * (1+rate/5);
-        },
+    set_velocity: function() {
+        var rate = 1+4*Math.tanh(SCORE.SCORE/1200);
+//        this.JUMP.ANIMATION_VELOCITY = SETTINGS.PLAYER.ANIMATION.JUMP_IPS * rate;
+        rate = 1 + 2.2*Math.tanh(SCORE.SCORE/1500);
+        this.RUN.ANIMATION_VELOCITY = SETTINGS.PLAYER.ANIMATION.RUN_IPS * rate;
+    },
     toggle_hitbox: function() {
         this.HITBOX_STATUS = !this.HITBOX_STATUS;
     }

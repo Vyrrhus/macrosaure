@@ -37,7 +37,7 @@ var BACKGROUND = {
                 }
             },
             set_velocity: function(rate) {
-                this.VELOCITY = -5 * rate;
+                this.VELOCITY = SETTINGS.SKY.VELOCITY * rate;
             },
             set_blocked: function(velocity) {
                 return 200;
@@ -78,7 +78,7 @@ var BACKGROUND = {
                 return true;
             },
             set_velocity: function(rate) {
-                this.VELOCITY = -50 * rate;
+                this.VELOCITY = SETTINGS.GROUND.VELOCITY * rate;
             },
             set_blocked: function(velocity) {
                 return 100;
@@ -87,15 +87,24 @@ var BACKGROUND = {
     },
     CALQUE: [],
     init: function(ctx) {
+        // Context
         this.CONTEXT = ctx;
+        this.CONTEXT.clearRect(0,0,WIDTH,HEIGHT);
+        
+        // Calques
         for (var element in this.DATA) {
             var calque = this.DATA[element];
             this.CALQUE[calque.NUM] = calque;
+            this.CALQUE[calque.NUM].NB_FRAMES = calque.FRAMES.length;
+            
+            // Image
             img = new Image();
             img.src = calque.FILE;
             this.CALQUE[calque.NUM].IMG = img;
-            this.CALQUE[calque.NUM].NB_FRAMES = calque.FRAMES.length;
-            this.CONTEXT.clearRect(0,0,WIDTH,HEIGHT);
+            img.onload = function() {
+                BACKGROUND.animate(calque, GAME.START_FPS);
+            }
+            
         }
     },
     draw: function(calque) {
@@ -189,7 +198,8 @@ var BACKGROUND = {
             }
         }
     },
-    set_velocity: function(rate) {
+    set_velocity: function() {
+        var rate = 1 + 9 * Math.tanh(SCORE.SCORE/3000);
         for (var i = 0 ; i < this.CALQUE.length ; i++) {
             calque = this.CALQUE[i];
             if (calque != undefined) {

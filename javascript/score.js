@@ -1,5 +1,7 @@
-var Score = {
+var SCORE = {
     size: 1.2,
+    HIGHSCORE: 0,
+    NB_TRY: 0,
     number: [
         {x:0, y:0, w:9, h:11}, // 0
         {x:10, y:0, w:9, h:11}, // 1
@@ -12,42 +14,69 @@ var Score = {
         {x:80, y:0, w:9, h:11}, // 8
         {x:90, y:0, w:9, h:11}  // 9
     ],
-    drawChiffre: function(ctx, img, chiffre, x, y) {
-        chiffre = parseInt(chiffre);
-        ctx.drawImage(img, 
-                      this.number[chiffre].x, 
-                      this.number[chiffre].y, 
-                      this.number[chiffre].w, 
-                      this.number[chiffre].h, 
-                      x, 
-                      y, 
-                      this.number[chiffre].w * this.size, 
-                      this.number[chiffre].h * this.size);
+    init: function(ctx) {
+        // Context
+        this.CONTEXT = ctx;
+        
+        // Image
+        img = new Image();
+        img.src = FILES.SCORE;
+        this.IMG = img;
+        
+        // Scores
+        this.SCORE = 0;
+        this.NB_TRY++;
+        
+        CONTEXT.TEXT.clearRect(0,0,WIDTH,HEIGHT);
+        
     },
-    drawScore: function(canvas, ctx, img, score) {
-        score = Math.floor(score).toString();
+    drawChiffre: function(chiffre, x, y) {
+        chiffre = parseInt(chiffre);
+        this.CONTEXT.drawImage(this.IMG,
+                               this.number[chiffre].x, 
+                               this.number[chiffre].y, 
+                               this.number[chiffre].w, 
+                               this.number[chiffre].h, 
+                               x, 
+                               y, 
+                               this.number[chiffre].w * this.size,
+                               this.number[chiffre].h * this.size);
+    },
+    drawScore: function() {
+        var score = Math.floor(this.SCORE).toString();
         len = score.length;
         for (var i=0 ; i < 5 - len ; i++) {
             score = '0' + score;
         }
-        ctx.clearRect(canvas.width - 120, 10, 120, 30);
+        this.CONTEXT.clearRect(WIDTH - 120, 10, 120, 30);
         for (i=0 ; i < 5 ; i++) {
-            var x = canvas.width - 120 + 20*i;
+            var x = WIDTH - 120 + 20*i;
             var y = 10;
-            this.drawChiffre(ctx, img, score[i], x, y);
+            this.drawChiffre(score[i], x, y);
+        }
+        
+        if (this.SCORE >= this.HIGHSCORE) {
+            this.HIGHSCORE = this.SCORE;
+        }
+        
+        if (this.NB_TRY > 1) {
+            this.drawHighScore();
         }
     },
-    drawHighScore: function(canvas, ctx, img, highScore) {
-        highScore = Math.floor(highScore).toString();
+    drawHighScore: function() {
+        var highScore = Math.floor(this.HIGHSCORE).toString();
         len = highScore.length;
         for (var i=0 ; i < 5 - len ; i++) {
             highScore = '0' + highScore;
         }
-        ctx.clearRect(canvas.width-280, 10, 140, 30);
+        this.CONTEXT.clearRect(WIDTH-280, 10, 140, 30);
         for (i=0 ; i < 5 ; i++) {
-            var x = canvas.width - 280 + 20*i;
+            var x = WIDTH - 280 + 20*i;
             var y = 10;
-            this.drawChiffre(ctx, img, highScore[i], x, y);
+            this.drawChiffre(highScore[i], x, y);
         }
+    },
+    reset: function() {
+        this.init(this.CONTEXT);
     }
 };
