@@ -1,3 +1,8 @@
+/* We need to fix all those events to declare them in config.js file.
+    + Resize function to try
+    + Focus & blur events
+*/
+
 var LOCK = false;
 GAME.init();
 
