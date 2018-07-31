@@ -3,10 +3,6 @@ var IMG = {
     OVER:   'assets/over.png',
 };
 
-// SCREEN SIZE
-//var WIDTH   = document.getElementById('body').offsetWidth;
-//var HEIGHT  = document.getElementById('body').offsetHeight;
-
 // TIME
 function getTimeNow() {
     return new Date();
@@ -30,6 +26,7 @@ var GAME = {
             image.src = IMG[element];
             IMG[element] = image;
         }
+        FRAMES.init();
         BACKGROUND.init(CONTEXT.BACKGROUND);
         OBSTACLES.init(CONTEXT.OBSTACLE);
         PLAYER.init(CONTEXT.MACRON);
@@ -81,17 +78,17 @@ var GAME = {
         PLAYER.run(this.FPS);
         
         // COLLISION DETECTION
-        var player_box = PLAYER.get_hitbox();
-        var obstacle_box = OBSTACLES.get_hitbox();
-        for (var i = 0 ; i < obstacle_box.length ; i++) {
-            var e = obstacle_box[i];
-            if (player_box.x < e.x + e.w 
-                && player_box.x + player_box.w > e.x 
-                && player_box.y < e.y + e.h 
-                && player_box.h + player_box.y > e.y) {
-                this.GAME_OVER = true;
-            }
-        }
+//        var player_box = PLAYER.get_hitbox();
+//        var obstacle_box = OBSTACLES.get_hitbox();
+//        for (var i = 0 ; i < obstacle_box.length ; i++) {
+//            var e = obstacle_box[i];
+//            if (player_box.x < e.x + e.w 
+//                && player_box.x + player_box.w > e.x 
+//                && player_box.y < e.y + e.h 
+//                && player_box.h + player_box.y > e.y) {
+//                this.GAME_OVER = true;
+//            }
+//        }
         
         // SCORE
         SCORE.SCORE+=0.1;
@@ -118,9 +115,9 @@ var GAME = {
         this.PAUSE = true;
     },
     setDifficulty: function() {
-        BACKGROUND.set_velocity();
-        OBSTACLES.set_velocity();
-        PLAYER.set_velocity();
+        BACKGROUND.set_speed();
+        OBSTACLES.set_speed();
+        PLAYER.set_speed();
     },
     toggle_hitbox: function() {
         PLAYER.toggle_hitbox();
