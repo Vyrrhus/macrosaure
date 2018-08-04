@@ -232,7 +232,7 @@ function frame(name, file, speed, orientation) {
     this.set_speed = function(rate) {
         this.speed = this.default_speed * rate;
     };
-    this.draw = function(ctx, num_tile, x, y, scale) {
+    this.draw = function(ctx, num_tile, x, y) {
 		if (this.orientation == "backward") {
 			ctx.save();
 			ctx.scale(-1,1)
@@ -242,9 +242,9 @@ function frame(name, file, speed, orientation) {
                       this.tiles[num_tile-1].width,
                       this.tiles[num_tile-1].height,
                       - x,
-                      y - scale * this.reference.height,
-                      - scale * this.tiles[num_tile-1].width,
-                      scale * this.tiles[num_tile-1].height);
+                      y - this.reference.height,
+                      - this.tiles[num_tile-1].width,
+                      this.tiles[num_tile-1].height);
 			ctx.restore();
 		}
 		else {
@@ -255,37 +255,38 @@ function frame(name, file, speed, orientation) {
                       this.tiles[num_tile-1].width,
                       this.tiles[num_tile-1].height,
                       x,
-                      y - scale * this.reference.height,
-                      scale * this.tiles[num_tile-1].width,
-                      scale * this.tiles[num_tile-1].height);
+                      y - this.reference.height,
+                      this.tiles[num_tile-1].width,
+                      this.tiles[num_tile-1].height);
 			ctx.restore();
 		}
 		
         if (this.hitbox_visible) {
-            this.draw_hitbox(ctx, num_tile, x, y, scale);
+            this.draw_hitbox(ctx, num_tile, x, y);
         }
     };
-    this.draw_hitbox = function(ctx, num_tile, x, y, scale) {
+    this.draw_hitbox = function(ctx, num_tile, x, y) {
         for (var i = 0 ; i < this.tiles[num_tile-1].box.length ; i++) {
             var box = this.tiles[num_tile-1].box[i];
 			if (this.orientation == "backward") {
 				ctx.beginPath();
-				ctx.scale(-1,1);
+				ctx.save();
 				ctx.strokeStyle = this.hitbox_color;
-				ctx.rect(- (x + scale * box.x + scale * box.width),
-						 y - scale * this.reference.height + scale * box.y,
-						 scale * box.width,
-						 scale * box.height);
+				ctx.rect(x + this.tiles[num_tile-1].width - box.x - box.width,
+						 y - this.reference.height + box.y,
+						 box.width,
+						 box.height);
 				ctx.stroke();
+				ctx.restore();
 				ctx.closePath();
 			}
 			else {
 				ctx.beginPath();
 				ctx.strokeStyle = this.hitbox_color;
-				ctx.rect(x + scale * box.x,
-						 y - scale * this.reference.height + scale * box.y,
-						 scale * box.width,
-						 scale * box.height);
+				ctx.rect(x + box.x,
+						 y - this.reference.height + box.y,
+						 box.width,
+						 box.height);
 				ctx.stroke();
 				ctx.closePath();
 			} 
@@ -310,7 +311,7 @@ function calque(ctx, frame, x, y) {
     this.current_tile = getRandom(1,this.frame.nb_max_tiles);
     
     // Methods
-    this.animate = function(fps, scale) {
+    this.animate = function(fps) {
         var velocity = Math.trunc(fps / this.frame.speed);  // frame/image
         this.nb_frame++;
         if (this.nb_frame >= velocity) {
@@ -320,7 +321,7 @@ function calque(ctx, frame, x, y) {
                 this.current_tile = 1;
             }
         }
-        this.frame.draw(this.ctx, this.current_tile, this.position.x, this.position.y, scale);
+        this.frame.draw(this.ctx, this.current_tile, this.position.x, this.position.y);
     }
     this.set_position = function(x, y) {
         this.position.x = x;
@@ -406,7 +407,7 @@ function layer(ctx, frame_list, speed, is_continuous, likelihood, nb_blocked, fu
         this.fill_screen();
         for (var i = 0 ; i < this.calque_list.length; i++) {
             var e = this.calque_list[i];
-            e.frame.draw(this.ctx, 1, e.position.x, e.position.y, 1)
+            e.frame.draw(this.ctx, 1, e.position.x, e.position.y)
         }
     }
     this.set_speed = function(rate) {
