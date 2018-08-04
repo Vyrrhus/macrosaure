@@ -39,7 +39,10 @@ var SPEED = {
     MOTION: {
         GROUND: -150,   // PX/s
         SKY: -5,        // PX/s
-        OBSTACLE: -20   // PX/s
+        OBSTACLE: -20,   // PX/s
+		rate_background: function(score) {
+			return 1 + 4 * Math.tanh(score/3000)
+		}
     }
 };
 
@@ -163,7 +166,7 @@ var FRAMES = {
     }
 };
 
-function frame(name, file, speed) {
+function frame(name, file, speed, orientation) {
     
     // Parameters
     this.name = name;
@@ -176,6 +179,7 @@ function frame(name, file, speed) {
         width: 0,
         height: 0
     };
+	this.orientation = typeof orientation !== 'undefined' ? orientation: "forward"
     
     // Initiate animation
     this.nb_max_tiles = 0;
@@ -193,7 +197,7 @@ function frame(name, file, speed) {
     };
     
     // Methods
-    this.add_tile = function(x, y, w, h) {
+    this.add_tile = function(x, y, w, h, orientation) {
         this.nb_max_tiles++;
         var tile = {
             num: this.nb_max_tiles,
@@ -229,7 +233,23 @@ function frame(name, file, speed) {
         this.speed = this.default_speed * rate;
     };
     this.draw = function(ctx, num_tile, x, y, scale) {
-        ctx.drawImage(this.image,
+		if (this.orientation == "backward") {
+			ctx.save();
+			ctx.scale(-1,1)
+			ctx.drawImage(this.image,
+                      this.tiles[num_tile-1].x,
+                      this.tiles[num_tile-1].y,
+                      this.tiles[num_tile-1].width,
+                      this.tiles[num_tile-1].height,
+                      - x,
+                      y - scale * this.reference.height,
+                      - scale * this.tiles[num_tile-1].width,
+                      scale * this.tiles[num_tile-1].height);
+			ctx.restore();
+		}
+		else {
+			ctx.save();
+			ctx.drawImage(this.image,
                       this.tiles[num_tile-1].x,
                       this.tiles[num_tile-1].y,
                       this.tiles[num_tile-1].width,
@@ -238,7 +258,9 @@ function frame(name, file, speed) {
                       y - scale * this.reference.height,
                       scale * this.tiles[num_tile-1].width,
                       scale * this.tiles[num_tile-1].height);
-        
+			ctx.restore();
+		}
+		
         if (this.hitbox_visible) {
             this.draw_hitbox(ctx, num_tile, x, y, scale);
         }
@@ -246,15 +268,33 @@ function frame(name, file, speed) {
     this.draw_hitbox = function(ctx, num_tile, x, y, scale) {
         for (var i = 0 ; i < this.tiles[num_tile-1].box.length ; i++) {
             var box = this.tiles[num_tile-1].box[i];
-            ctx.beginPath();
-            ctx.strokeStyle = this.hitbox_color;
-            ctx.rect(x + scale * box.x,
-                     y - scale * this.reference.height + scale * box.y,
-                     scale * box.width,
-                     scale * box.height);
-            ctx.stroke();
+			if (this.orientation == "backward") {
+				ctx.beginPath();
+				ctx.scale(-1,1);
+				ctx.strokeStyle = this.hitbox_color;
+				ctx.rect(- (x + scale * box.x + scale * box.width),
+						 y - scale * this.reference.height + scale * box.y,
+						 scale * box.width,
+						 scale * box.height);
+				ctx.stroke();
+				ctx.closePath();
+			}
+			else {
+				ctx.beginPath();
+				ctx.strokeStyle = this.hitbox_color;
+				ctx.rect(x + scale * box.x,
+						 y - scale * this.reference.height + scale * box.y,
+						 scale * box.width,
+						 scale * box.height);
+				ctx.stroke();
+				ctx.closePath();
+			} 
         }
     }
+	this.switch_orientation = function() {
+		if (this.orientation == 'forward') {this.orientation = "backward";}
+		else {this.orientation = "forward";}
+	}
 }
 
 function calque(ctx, frame, x, y) {

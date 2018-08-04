@@ -21,9 +21,8 @@ var BACKGROUND = {
     },
     
     set_speed: function() {
-        var rate = 1 + 4 * Math.tanh(SCORE.SCORE/3000);
         for (var i = 0 ; i < this.LAYERS.length ; i++) {
-            this.LAYERS[i].set_speed(rate);
+            this.LAYERS[i].set_speed(SPEED.MOTION.rate_background(SCORE.SCORE));
         }
     },
     

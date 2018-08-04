@@ -69,8 +69,7 @@ var OBSTACLES = {
     },
     
     set_speed: function() {
-        var rate_motion = 1 + 9 * Math.tanh(SCORE.SCORE/3000);
-        this.VELOCITY = SPEED.MOTION.GROUND * rate_motion + SPEED.MOTION.OBSTACLE;
+        this.VELOCITY = SPEED.MOTION.GROUND * SPEED.MOTION.rate_background(SCORE.SCORE) + SPEED.MOTION.OBSTACLE;
         this.set_gap();
         var rate_animation = 1 + 2.2*Math.tanh(SCORE.SCORE/1500);
         for (var i = 0 ; i < this.NB_OBS ; i++) {
