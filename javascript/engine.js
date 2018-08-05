@@ -97,9 +97,7 @@ var GAME = {
 		// SWITCH SIDE
 		if (this.SCORE_UNTIL_SWITCH < 0) {
 			OBSTACLES.NB_OBS_MAX = 0;
-			console.log('1st boucle')
 			if (OBSTACLES.NB_CURRENT_OBS == 0) {
-				console.log("no obstacle")
 				BACKGROUND.stop();
 				var transX = Math.abs((SPEED.MOTION.GROUND + SPEED.MOTION.OBSTACLE)/this.FPS);
 				if (PLAYER.RUNNING_SIDE == "forward") {
@@ -115,7 +113,6 @@ var GAME = {
 			switch (PLAYER.RUNNING_SIDE) {
 				case "forward":
 					if (PLAYER.OFFSET.x >= WIDTH - SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x) {
-						console.log('olé');
 						PLAYER.switch_status();
 						this.switch_side(WIDTH - SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x);
 						this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
@@ -125,7 +122,6 @@ var GAME = {
 					break;
 				case "backward":
 					if (PLAYER.OFFSET.x <= SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x) {
-						console.log('ola');
 						PLAYER.switch_status();
 						this.switch_side(SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x);
 						this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
@@ -135,7 +131,6 @@ var GAME = {
 					break;
 			}
 		} else {
-			console.log('usually')
 			// SCORE
 			SCORE.SCORE+= SETTINGS.SCORE.PER_FRAME;
 			this.SCORE_UNTIL_SWITCH-= SETTINGS.SCORE.PER_FRAME;

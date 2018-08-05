@@ -7,6 +7,7 @@ var CANVAS = {
 };
 
 // CANVAS SIZE
+var WIDTH_TO_HEIGHT_RATIO = 3;
 var WIDTH   = CANVAS.BACKGROUND.width;
 var HEIGHT  = CANVAS.BACKGROUND.height;
 
@@ -28,8 +29,6 @@ var FILES = {
 };
 
 // SETTINGS
-var SCALE = 1;
-
 var SPEED = {
     ANIMATION: {
         JUMP:   8,      // img/s
@@ -73,7 +72,7 @@ var SETTINGS = {
     },
 	SWITCH_MODE: {
 		SCORE: 800,
-		OFFSET_COEFF: 1
+		OFFSET_COEFF: 3
 	},
 	SCORE: {
 		PER_FRAME: 0.1

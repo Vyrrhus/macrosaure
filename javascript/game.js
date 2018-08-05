@@ -58,6 +58,33 @@ function resize() {
     }
 }
 
+function set_screen() {
+	console.log(`w: ${window.innerWidth} ; h: ${window.innerHeight}`);
+	if ((window.innerWidth - window.innerWidth%WIDTH_TO_HEIGHT_RATIO) / WIDTH_TO_HEIGHT_RATIO <= window.innerHeight) {
+		var new_width = window.innerWidth - window.innerWidth%WIDTH_TO_HEIGHT_RATIO;
+		var new_height = new_width / WIDTH_TO_HEIGHT_RATIO;
+		var side_margin = 0;
+		var top_margin = Math.trunc((window.innerHeight - new_height)/2);
+	} else {
+		var new_height = window.innerHeight;
+		var new_width = WIDTH_TO_HEIGHT_RATIO * new_height;
+		var side_margin = Math.ceil((window.innerWidth - new_width)/2);
+		var top_margin = 0;
+	}
+	for (var element in CANVAS) {
+		document.getElementById("test").style.color="blue"
+		CANVAS[element].style.width = new_width+"px";
+		CANVAS[element].style.height = new_height+"px";
+		CANVAS[element].style.marginLeft = side_margin+"px";
+		CANVAS[element].style.marginRight = side_margin+"px";
+		CANVAS[element].style.marginTop = top_margin+"px";
+		CANVAS[element].style.marginBottom = top_margin+"px";
+	}
+}
+window.addEventListener('resize', set_screen, false);
+window.onload = set_screen();
+
+
 //window.onload = function() {
 //	resize();
 //	window.addEventListener('resize', resize, false);
