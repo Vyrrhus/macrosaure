@@ -72,7 +72,6 @@ function set_screen() {
 		var top_margin = 0;
 	}
 	for (var element in CANVAS) {
-		document.getElementById("test").style.color="blue"
 		CANVAS[element].style.width = new_width+"px";
 		CANVAS[element].style.height = new_height+"px";
 		CANVAS[element].style.marginLeft = side_margin+"px";
