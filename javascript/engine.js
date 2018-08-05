@@ -10,6 +10,7 @@ function getTimeNow() {
 
 // RANDOM NUM
 function getRandom(min, max) {
+	if (max == 0) {return 0;}
     return Math.floor(Math.random() * (max+1-min) + min);
 }
 
@@ -20,12 +21,15 @@ var GAME = {
     START_FPS:  60,
     GAME_OVER:  false,
     PAUSE: false,
+	SWITCH: false,
+	NB_SWITCH: 1,
     init: function() {
         for (var element in IMG) {
             image = new Image();
             image.src = IMG[element];
             IMG[element] = image;
         }
+		this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
         FRAMES.init();
         BACKGROUND.init(CONTEXT.BACKGROUND);
         OBSTACLES.init(CONTEXT.OBSTACLE);
@@ -70,7 +74,7 @@ var GAME = {
         if (this.PAUSE) {
             return;
         }
-        
+		
         // RUNNING
         this.tick(time);
         BACKGROUND.run(this.FPS);
@@ -90,13 +94,56 @@ var GAME = {
 //            }
 //        }
         
-        // SCORE
-        SCORE.SCORE+=0.1;
-        SCORE.drawScore();
+		// SWITCH SIDE
+		if (this.SCORE_UNTIL_SWITCH < 0) {
+			OBSTACLES.NB_OBS_MAX = 0;
+			console.log('1st boucle')
+			if (OBSTACLES.NB_CURRENT_OBS == 0) {
+				console.log("no obstacle")
+				BACKGROUND.stop();
+				var transX = Math.abs((SPEED.MOTION.GROUND + SPEED.MOTION.OBSTACLE)/this.FPS);
+				if (PLAYER.RUNNING_SIDE == "forward") {
+					PLAYER.OFFSET.x += transX;
+				} else {
+					PLAYER.OFFSET.x -= transX;
+				}
+			} else {
+				SCORE.SCORE += SETTINGS.SCORE.PER_FRAME;
+				SCORE.drawScore();
+				this.setDifficulty();
+			}
+			switch (PLAYER.RUNNING_SIDE) {
+				case "forward":
+					if (PLAYER.OFFSET.x >= WIDTH - SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x) {
+						console.log('olé');
+						PLAYER.switch_status();
+						this.switch_side(WIDTH - SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x);
+						this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
+						OBSTACLES.NB_OBS_MAX = SETTINGS.OBSTACLE.NB_OBS_MAX;
+						this.NB_SWITCH++;
+					}
+					break;
+				case "backward":
+					if (PLAYER.OFFSET.x <= SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x) {
+						console.log('ola');
+						PLAYER.switch_status();
+						this.switch_side(SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x);
+						this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
+						OBSTACLES.NB_OBS_MAX = SETTINGS.OBSTACLE.NB_OBS_MAX;
+						this.NB_SWITCH++;
+					}
+					break;
+			}
+		} else {
+			console.log('usually')
+			// SCORE
+			SCORE.SCORE+= SETTINGS.SCORE.PER_FRAME;
+			this.SCORE_UNTIL_SWITCH-= SETTINGS.SCORE.PER_FRAME;
+			SCORE.drawScore();
         
-        // DIFFICULTY
-        this.setDifficulty();
-        
+			// DIFFICULTY
+			this.setDifficulty();
+		}
         requestAnimationFrame(function (time) {self.animate(time);});
     },
     over: function() {
@@ -119,6 +166,11 @@ var GAME = {
         OBSTACLES.set_speed();
         PLAYER.set_speed();
     },
+	switch_side: function(x) {
+		BACKGROUND.switch_side();
+		OBSTACLES.switch_side();
+		PLAYER.switch_side(x);
+	},
     toggle_hitbox: function() {
         PLAYER.toggle_hitbox();
         OBSTACLES.toggle_hitbox();

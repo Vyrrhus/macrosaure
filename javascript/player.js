@@ -14,6 +14,7 @@ var PLAYER = {
     init: function(ctx) {
         // Context
         this.CONTEXT = ctx;
+		this.RUNNING_SIDE = "forward";
         
         // Frames & Calques
         this.JUMP.FRAME = FRAMES.PLAYER.JUMP;
@@ -38,7 +39,8 @@ var PLAYER = {
         }
     },
     run_animate: function(fps) {
-        this.RUN.CALQUE.animate(fps, 1);
+		this.RUN.CALQUE.set_position(this.OFFSET.x, this.OFFSET.y - this.HEIGHT)
+        this.RUN.CALQUE.animate(fps);
     },
     jump_animate: function(fps) {
         var height = 0;
@@ -79,6 +81,19 @@ var PLAYER = {
             this.switch_status();
         }
         this.init(this.CONTEXT);
-    }
+    },
+	
+	switch_side: function(x) {
+		this.JUMP.FRAME.switch_orientation();
+		this.RUN.FRAME.switch_orientation();
+		if (this.RUNNING_SIDE == 'forward') {
+			this.RUNNING_SIDE = 'backward';
+			this.OFFSET.x = x;
+		}
+		else {
+			this.RUNNING_SIDE = 'forward';
+			this.OFFSET.x = x;
+		}
+	}
 };
 

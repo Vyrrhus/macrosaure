@@ -39,7 +39,7 @@ var SPEED = {
     MOTION: {
         GROUND: -150,   // PX/s
         SKY: -5,        // PX/s
-        OBSTACLE: -20,   // PX/s
+        OBSTACLE: -20,  // PX/s
 		rate_background: function(score) {
 			return 1 + 4 * Math.tanh(score/3000)
 		}
@@ -52,7 +52,7 @@ var POSITION = {
         return 0.8*HEIGHT;
     },
     get_sky: function() {
-        return getRandom(0.1*HEIGHT, 0.4*HEIGHT);
+        return getRandom(0.2*HEIGHT, 0.4*HEIGHT);
     },
     get_people: function() {
         return POSITION.get_ground() - HEIGHT * 0.02;
@@ -70,7 +70,14 @@ var SETTINGS = {
         WIDTH_COEFF: 0.5,
         GENERATOR_COEFF: 0.1,
         NB_OBS_MAX: 5
-    }
+    },
+	SWITCH_MODE: {
+		SCORE: 800,
+		OFFSET_COEFF: 1
+	},
+	SCORE: {
+		PER_FRAME: 0.1
+	}
 }
 
 // FRAMES
@@ -332,11 +339,19 @@ function calque(ctx, frame, x, y) {
         this.position.y += transY;
     }
     this.is_onscreen = function() {
-        if (this.position.x + this.frame.reference.width < 0) {
-            return false;
-        } else {
-            return true;
-        }
+		if (this.frame.orientation == "forward") {
+			if (this.position.x + this.frame.reference.width < 0) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			if (this.position.x > WIDTH) {
+				return false;
+			} else {
+				return true;
+			}
+		}
     }
 }
 
@@ -359,7 +374,11 @@ function layer(ctx, frame_list, speed, is_continuous, likelihood, nb_blocked, fu
     // Methods
     this.get_height = func_offset_y;
     this.add_calque = function(num, x) {
-        var next_calque = new calque(this.ctx, this.frame_list[num-1], x, this.get_height());
+		if (this.default_motion_speed >= 0) {
+			var next_calque = new calque(this.ctx, this.frame_list[num-1], WIDTH - x - this.frame_list[num-1].reference.width, this.get_height());
+		} else {
+			var next_calque = new calque(this.ctx, this.frame_list[num-1], x, this.get_height());
+		}
         this.calque_list.push(next_calque);
     }
     this.add_random_calque = function(x) {

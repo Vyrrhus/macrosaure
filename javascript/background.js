@@ -30,5 +30,14 @@ var BACKGROUND = {
     // WIP
     reset: function() {
         this.init(this.CONTEXT);
-    }
+    },
+	
+	switch_side: function() {
+		this.LAYERS[0].default_motion_speed *= -1;
+		this.LAYERS[0].current_width = WIDTH;
+	},
+	stop: function() {
+		this.LAYERS[0].set_speed(0);
+	}
+	
 };
