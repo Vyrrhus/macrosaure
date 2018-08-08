@@ -38,8 +38,8 @@ var AUDIO = {
 	FILES: {
 	},
 	PATH: {
-		JUMP: 'sound/jump.wav',
-		HIT: 'sound/hit.wav'
+		JUMP: 'sound/jump.ogg',
+		HIT: 'sound/hit.ogg'
 	},
 	init: function() {
 		for (var element in this.PATH) {
