@@ -4,12 +4,12 @@ var PLAYER = {
         y: POSITION.get_people()
     },
     JUMP:  {
-        STATUS: true,
+        STATUS: false,
         JUMP_TIME: SETTINGS.PLAYER.JUMP_TIME,
         MAX_HEIGHT: SETTINGS.PLAYER.JUMP_HEIGHT,  
     },
     RUN: {
-        STATUS: false,
+        STATUS: true,
     },
     init: function(ctx) {
         // Context

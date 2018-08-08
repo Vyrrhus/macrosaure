@@ -26,7 +26,11 @@ var FILES = {
     PLAYER: 'assets/macron.png',
     OBSTACLE: 'assets/obs.png',
     GROUND: 'assets/ground.png',
-    SKY: 'assets/sky.png'
+    SKY: 'assets/sky.png',
+	loading: {
+		NAME: 'RUN',
+		state: false
+	}
 };
 
 // AUDIO FILES
@@ -175,15 +179,33 @@ var FRAMES = {
         this.PLAYER.init();
         this.OBSTACLE.init();
         this.BACKGROUND.init();
+		processImage();
+		
+		function processImage() {
+			if (FILES.loading.state) {
+				FRAMES.PLAYER.RUN.draw(CONTEXT.BACKGROUND, 1, POSITION.player_offset_x, POSITION.get_people());
+				FRAMES.BACKGROUND.
+				return
+			}
+			window.setTimeout(processImage, 50);
+		}
     }
 };
 
 function frame(name, file, speed, orientation) {
     
+	// Self
+	var self = this;
+	
     // Parameters
     this.name = name;
     this.file = file;
     this.image = new Image();
+	this.image.onload = function() {
+		if (self.name = FILES.loading.NAME) {
+			FILES.loading.state = true;
+		}
+	}
     this.image.src = this.file;
     this.default_speed = speed;     // image/s
     this.speed = speed;             // image/s

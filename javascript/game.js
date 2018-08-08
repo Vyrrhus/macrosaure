@@ -49,6 +49,7 @@ document.addEventListener('keydown', function(event) {
 
 // FUNCTIONS
 function start() {
+	jump();
 	GAME.start();
 	LOCK = true;
 }
