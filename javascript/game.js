@@ -20,7 +20,7 @@ document.addEventListener('touchstart', function(event) {
 	TOUCH = true;
 });
 
-document.addEventListener('mouseup', function(event) {
+document.addEventListener('mousedown', function(event) {
 	if (TOUCH) {
 		TOUCH = false;
 		return
@@ -64,14 +64,16 @@ function set_screen() {
 	if ((window.innerWidth - window.innerWidth%WIDTH_TO_HEIGHT_RATIO) / WIDTH_TO_HEIGHT_RATIO <= window.innerHeight) {
 		var new_width = window.innerWidth - window.innerWidth%WIDTH_TO_HEIGHT_RATIO;
 		var new_height = new_width / WIDTH_TO_HEIGHT_RATIO;
-		var side_margin = 0;
-		var top_margin = Math.trunc((window.innerHeight - new_height)/2);
 	} else {
 		var new_height = window.innerHeight;
 		var new_width = WIDTH_TO_HEIGHT_RATIO * new_height;
-		var side_margin = Math.ceil((window.innerWidth - new_width)/2);
-		var top_margin = 0;
 	}
+	if (new_width > MAX_WIDTH) {
+		new_width = MAX_WIDTH - MAX_WIDTH%WIDTH_TO_HEIGHT_RATIO;
+		new_height = new_width / WIDTH_TO_HEIGHT_RATIO;
+	}
+	var side_margin = Math.ceil((window.innerWidth - new_width)/2);
+	var top_margin = Math.trunc((window.innerHeight - new_height)/2);
 	for (var element in CANVAS) {
 		CANVAS[element].style.width = new_width+"px";
 		CANVAS[element].style.height = new_height+"px";
