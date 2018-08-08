@@ -28,6 +28,7 @@ var PLAYER = {
         this.JUMP.ACCELERATION = - 8 * this.JUMP.MAX_HEIGHT / Math.pow(this.JUMP.JUMP_TIME, 2);
         this.JUMP.VELOCITY = 4 * this.JUMP.MAX_HEIGHT / this.JUMP.JUMP_TIME;
         this.JUMP.TIME = 0;
+		this.JUMP.SOUND = new Audio(AUDIO.JUMP);
     },
     
     run: function(fps) {
@@ -59,6 +60,9 @@ var PLAYER = {
     switch_status: function() {
         this.JUMP.STATUS = !this.JUMP.STATUS;
         this.RUN.STATUS = !this.RUN.STATUS;
+		if (this.JUMP.STATUS) {
+			this.JUMP.SOUND.play();
+		}
     },
     
     set_speed: function() {

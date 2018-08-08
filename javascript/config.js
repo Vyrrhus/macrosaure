@@ -28,6 +28,11 @@ var FILES = {
     SKY: 'assets/sky.png'
 };
 
+// AUDIO FILES
+var AUDIO = {
+	JUMP: 'sound/jump.wav'
+}
+
 // SETTINGS
 var SPEED = {
     ANIMATION: {

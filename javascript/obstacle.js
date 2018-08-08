@@ -30,7 +30,6 @@ var OBSTACLES = {
 		if (this.RUNNING_SIDE == "backward") {
 			this.VELOCITY *= -1;
 		}
-		console.log(this.VELOCITY);
         var pixel_per_frame = this.VELOCITY / fps;
         var transX = Math.trunc(this.OFFSET.x + pixel_per_frame);
         this.OFFSET.x += pixel_per_frame - transX;
