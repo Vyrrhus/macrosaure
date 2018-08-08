@@ -1,7 +1,7 @@
 // LOCK to prevent multiple start (click & keyboard & touch)
 var LOCK = false;
 var TOUCH = false;
-
+var SOUND_JUMP = new Audio(AUDIO.JUMP);
 // EVENTS
 
 window.onload = function() {
@@ -55,6 +55,7 @@ function start() {
 
 function jump() {
 	if (!PLAYER.JUMP.STATUS) {
+		SOUND_JUMP.play();
 		PLAYER.switch_status();
 	}
 }
