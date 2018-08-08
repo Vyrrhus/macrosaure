@@ -1,7 +1,6 @@
 // LOCK to prevent multiple start (click & keyboard & touch)
 var LOCK = false;
 var TOUCH = false;
-var SOUND_JUMP = new Audio(AUDIO.JUMP);
 // EVENTS
 
 window.onload = function() {
@@ -17,6 +16,9 @@ document.addEventListener('touchstart', function(event) {
 	} else {
 		jump();
 	}
+	if (GAME.GAME_OVER) {
+		GAME.reset();
+	}
 	TOUCH = true;
 });
 
@@ -30,9 +32,15 @@ document.addEventListener('mousedown', function(event) {
 	} else {
 		jump();
 	}
+	if (GAME.GAME_OVER) {
+		GAME.reset();
+	}
 });
 
 document.addEventListener('keydown', function(event) {
+	if (GAME.GAME_OVER) {
+		return
+	}
     if (event.keyCode == 32 || event.keyCode == 38) {
         if (!LOCK) {
             start();
@@ -56,7 +64,7 @@ function start() {
 
 function jump() {
 	if (!PLAYER.JUMP.STATUS) {
-		SOUND_JUMP.play();
+		AUDIO.FILES.JUMP.play();
 		PLAYER.switch_status();
 	}
 }
