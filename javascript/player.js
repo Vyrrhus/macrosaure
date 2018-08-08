@@ -96,6 +96,14 @@ var PLAYER = {
 			this.RUNNING_SIDE = 'forward';
 			this.OFFSET.x = x;
 		}
+	},
+	
+	get_hitbox: function() {
+		if (this.JUMP.STATUS) {
+			return this.JUMP.CALQUE.get_hitbox();
+		} else {
+			return this.RUN.CALQUE.get_hitbox();
+		}
 	}
 };
 

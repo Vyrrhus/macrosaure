@@ -30,6 +30,7 @@ var GAME = {
             IMG[element] = image;
         }
 		this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
+		AUDIO.init();
         FRAMES.init();
         BACKGROUND.init(CONTEXT.BACKGROUND);
         OBSTACLES.init(CONTEXT.OBSTACLE);
@@ -81,19 +82,8 @@ var GAME = {
         OBSTACLES.run(this.FPS);
         PLAYER.run(this.FPS);
         
-        // COLLISION DETECTION
-//        var player_box = PLAYER.get_hitbox();
-//        var obstacle_box = OBSTACLES.get_hitbox();
-//        for (var i = 0 ; i < obstacle_box.length ; i++) {
-//            var e = obstacle_box[i];
-//            if (player_box.x < e.x + e.w 
-//                && player_box.x + player_box.w > e.x 
-//                && player_box.y < e.y + e.h 
-//                && player_box.h + player_box.y > e.y) {
-//                this.GAME_OVER = true;
-//            }
-//        }
-        
+		this.collision();
+		
 		// SWITCH SIDE
 		if (this.SCORE_UNTIL_SWITCH < 0) {
 			OBSTACLES.NB_OBS_MAX = 0;
@@ -148,6 +138,7 @@ var GAME = {
     reset: function() {
         this.GAME_OVER = false;
         this.LAST_TIME = 0;
+		this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
         PLAYER.reset();
         OBSTACLES.reset();
         SCORE.reset();
@@ -156,6 +147,24 @@ var GAME = {
     stop: function() {
         this.PAUSE = true;
     },
+	collision: function() {
+		var player_box = PLAYER.get_hitbox();
+		var list_obs_box = OBSTACLES.get_hitbox();
+		for (var i = 0 ; i < list_obs_box.length ; i++) {
+			var obs_box = list_obs_box[i];
+			for (var j = 0 ; j < player_box.length ; j++) {
+				for (var k = 0 ; k < obs_box.length ; k++) {
+					if (player_box[j].x < obs_box[k].x + obs_box[k].width
+					    && player_box[j].x + player_box[j].width > obs_box[k].x
+					    && player_box[j].y < obs_box[k].y + obs_box[k].height
+					    && player_box[j].y + player_box[j].width > obs_box[k].y) {
+						this.GAME_OVER = true;
+						AUDIO.FILES.HIT.play();
+					}
+				}
+			}
+		}
+	},
     setDifficulty: function() {
         BACKGROUND.set_speed();
         OBSTACLES.set_speed();

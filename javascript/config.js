@@ -35,7 +35,17 @@ var FILES = {
 
 // AUDIO FILES
 var AUDIO = {
-	JUMP: 'sound/jump.wav'
+	FILES: {
+	},
+	PATH: {
+		JUMP: 'sound/jump.wav',
+		HIT: 'sound/hit.wav'
+	},
+	init: function() {
+		for (var element in this.PATH) {
+			this.FILES[element] = new Audio(this.PATH[element]);
+		}
+	}
 }
 
 // SETTINGS
@@ -184,7 +194,6 @@ var FRAMES = {
 		function processImage() {
 			if (FILES.loading.state) {
 				FRAMES.PLAYER.RUN.draw(CONTEXT.BACKGROUND, 1, POSITION.player_offset_x, POSITION.get_people());
-				FRAMES.BACKGROUND.
 				return
 			}
 			window.setTimeout(processImage, 50);
@@ -313,8 +322,7 @@ function frame(name, file, speed, orientation) {
 				ctx.stroke();
 				ctx.restore();
 				ctx.closePath();
-			}
-			else {
+			} else {
 				ctx.beginPath();
 				ctx.strokeStyle = this.hitbox_color;
 				ctx.rect(x + box.x,
@@ -325,7 +333,30 @@ function frame(name, file, speed, orientation) {
 				ctx.closePath();
 			} 
         }
-    }
+    };
+	this.get_hitbox = function(num_tile, x, y) {
+		var list_box = [];
+		for (var i = 0 ; i < this.tiles[num_tile-1].box.length ; i++) {
+			var box = this.tiles[num_tile-1].box[i];
+			if (this.orientation == "backward") {
+				var hitbox = {
+					x: x + this.tiles[num_tile-1].width - box.x - box.width,
+					y: box.y + y - this.reference.height,
+					width: box.width,
+					height: box.height
+				};
+			} else {
+				var hitbox = {
+					x: x + box.x,
+					y: y + box.y - this.reference.height,
+					width: box.width,
+					height: box.height
+				};
+			}
+			list_box.push(hitbox);
+		}
+		return list_box
+	}
 	this.switch_orientation = function() {
 		if (this.orientation == 'forward') {this.orientation = "backward";}
 		else {this.orientation = "forward";}
@@ -380,6 +411,9 @@ function calque(ctx, frame, x, y) {
 			}
 		}
     }
+	this.get_hitbox = function() {
+		return this.frame.get_hitbox(this.current_tile, this.position.x, this.position.y);
+	}
 }
 
 function layer(ctx, frame_list, speed, is_continuous, likelihood, nb_blocked, func_offset_y) {

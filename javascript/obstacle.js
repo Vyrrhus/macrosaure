@@ -41,7 +41,7 @@ var OBSTACLES = {
         for (var i = 0 ; i < this.NB_CURRENT_OBS ; i++) {
             this.CALQUE[i].translate(transX, 0);
             if (!this.CALQUE[i].is_onscreen()) {
-//                console.log(`    - OBS "${this.CALQUE[i].frame.name}"`);
+                console.log(`    - OBS "${this.CALQUE[i].frame.name}"`);
                 this.CALQUE.splice(i, 1);
                 this.NB_CURRENT_OBS--;
                 i--;
@@ -72,7 +72,7 @@ var OBSTACLES = {
                 this.CURRENT_GAP -= obstacle.frame.reference.width;
                 this.CALQUE.push(obstacle);
                 this.NB_CURRENT_OBS++;
-//                console.log(`+ OBS "${obstacle.frame.name}"`)
+                console.log(`+ OBS "${obstacle.frame.name}"`)
             }
         } else {
             this.CURRENT_BLOCKED = SETTINGS.OBSTACLE.NB_PIXEL_BLOCKED;
@@ -112,5 +112,13 @@ var OBSTACLES = {
 		else {
 			this.RUNNING_SIDE = 'forward';
 		}
+	},
+	
+	get_hitbox: function() {
+		var box_list = [];
+		for (var i = 0 ; i < this.NB_CURRENT_OBS ; i++) {
+			box_list.push(this.CALQUE[i].get_hitbox());
+		}
+		return box_list;
 	}
 };
