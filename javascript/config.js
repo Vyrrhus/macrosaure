@@ -8,7 +8,7 @@ var CANVAS = {
 
 // CANVAS SIZE
 var WIDTH_TO_HEIGHT_RATIO = 3;
-var MAX_WIDTH = 1299;
+var MAX_WIDTH = 800-800%3;
 var WIDTH   = CANVAS.BACKGROUND.width;
 var HEIGHT  = CANVAS.BACKGROUND.height;
 
@@ -27,6 +27,7 @@ var FILES = {
     OBSTACLE: 'assets/obs.png',
     GROUND: 'assets/ground.png',
     SKY: 'assets/sky.png',
+	GAME_OVER: 'assets/over.png',
 	loading: {
 		NAME: 'RUN',
 		state: false
@@ -201,7 +202,7 @@ var FRAMES = {
     }
 };
 
-function frame(name, file, speed, orientation) {
+function frame(name, file, speed, options) {
     
 	// Self
 	var self = this;
@@ -222,7 +223,14 @@ function frame(name, file, speed, orientation) {
         width: 0,
         height: 0
     };
-	this.orientation = typeof orientation !== 'undefined' ? orientation: "forward"
+	if (options === undefined) {
+		options = {};
+	}
+	if (options.orientation === undefined) {
+		options.orientation = "forward";
+	}
+	this.orientation = options.orientation;
+//	this.orientation = typeof orientation !== 'undefined' ? orientation: "forward"
     
     // Initiate animation
     this.nb_max_tiles = 0;
@@ -240,7 +248,13 @@ function frame(name, file, speed, orientation) {
     };
     
     // Methods
-    this.add_tile = function(x, y, w, h, orientation) {
+    this.add_tile = function(x, y, w, h, options) {
+		if (options === undefined) {
+			options = {};
+		}
+		if (options.type === undefined) {
+			options.type = "loop";
+		}
         this.nb_max_tiles++;
         var tile = {
             num: this.nb_max_tiles,
@@ -248,8 +262,10 @@ function frame(name, file, speed, orientation) {
             x: x,
             y: y,
             width: w,
-            height: h
+            height: h,
+			type: options.type
         };
+		
         this.tiles.push(tile);
         this.set_ref();
     };
@@ -373,8 +389,11 @@ function calque(ctx, frame, x, y) {
     };
     this.nb_frame = 0;
     this.frame = frame;
-    this.current_tile = getRandom(1,this.frame.nb_max_tiles);
-    
+	if (this.frame.tiles[0].type == "loop") {
+		this.current_tile = 1;
+	} else {
+		this.current_tile = getRandom(1,this.frame.nb_max_tiles);
+	}    
     // Methods
     this.animate = function(fps) {
         var velocity = Math.trunc(fps / this.frame.speed);  // frame/image
@@ -387,6 +406,10 @@ function calque(ctx, frame, x, y) {
             }
         }
         this.frame.draw(this.ctx, this.current_tile, this.position.x, this.position.y);
+		if (this.frame.tiles[this.current_tile-1].type != "loop") {
+			this.frame.nb_max_tiles--;
+			this.frame.first_tile++;
+		}
     }
     this.set_position = function(x, y) {
         this.position.x = x;
