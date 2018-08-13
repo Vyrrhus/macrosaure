@@ -16,7 +16,7 @@ document.addEventListener('touchstart', function(event) {
 	} else {
 		jump();
 	}
-	if (GAME.GAME_OVER) {
+	if (GAME.STATE.GAME_OVER) {
 		GAME.reset();
 	}
 	TOUCH = true;
@@ -32,13 +32,13 @@ document.addEventListener('mousedown', function(event) {
 	} else {
 		jump();
 	}
-	if (GAME.GAME_OVER) {
+	if (GAME.STATE.GAME_OVER) {
 		GAME.reset();
 	}
 });
 
 document.addEventListener('keydown', function(event) {
-	if (GAME.GAME_OVER) {
+	if (GAME.STATE.GAME_OVER) {
 		return
 	}
     if (event.keyCode == 32 || event.keyCode == 38) {
@@ -51,9 +51,10 @@ document.addEventListener('keydown', function(event) {
     if (event.keyCode == 84) {
         GAME.toggle_hitbox();
     }
+	if (event.keyCode == 96) {
+		GAME.toggle_collision();
+	}
 });
-
-
 
 // FUNCTIONS
 function start() {

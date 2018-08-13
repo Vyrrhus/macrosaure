@@ -1,8 +1,3 @@
-// IMAGE
-var IMG = {
-    OVER:   'assets/over.png',
-};
-
 // TIME
 function getTimeNow() {
     return new Date();
@@ -19,16 +14,13 @@ var GAME = {
     FRAME_TIME: 0,
     FPS:        0,
     START_FPS:  60,
-    GAME_OVER:  false,
-    PAUSE: false,
-	SWITCH: false,
-	NB_SWITCH: 1,
+	STATE: {
+		GAME_OVER: false,
+		PAUSE: false,
+		NB_SWITCH: 1,
+		COLLISION: true
+	},
     init: function() {
-        for (var element in IMG) {
-            image = new Image();
-            image.src = IMG[element];
-            IMG[element] = image;
-        }
 		this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
 		AUDIO.init();
         FRAMES.init();
@@ -39,7 +31,7 @@ var GAME = {
     },
     start: function() {
         var self = this;
-        this.PAUSE = false;
+        this.STATE.PAUSE = false;
         requestAnimationFrame(function (time) {self.animate(time);});
     },
     tick: function(time) {
@@ -65,14 +57,14 @@ var GAME = {
         var self = this;
         
         // GAME OVER
-        if (this.GAME_OVER) {
+        if (this.STATE.GAME_OVER) {
             SCORE.drawHighScore();
             this.over();
             return;
         }
         
         // PAUSE
-        if (this.PAUSE) {
+        if (this.STATE.PAUSE) {
             return;
         }
 		
@@ -82,7 +74,9 @@ var GAME = {
         OBSTACLES.run(this.FPS);
         PLAYER.run(this.FPS);
         
-		this.collision();
+		if (this.STATE.COLLISION) {
+			this.collision();
+		}
 		
 		// SWITCH SIDE
 		if (this.SCORE_UNTIL_SWITCH < 0) {
@@ -107,7 +101,7 @@ var GAME = {
 						this.switch_side(WIDTH - SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x);
 						this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
 						OBSTACLES.NB_OBS_MAX = SETTINGS.OBSTACLE.NB_OBS_MAX;
-						this.NB_SWITCH++;
+						this.STATE.NB_SWITCH++;
 					}
 					break;
 				case "backward":
@@ -116,7 +110,7 @@ var GAME = {
 						this.switch_side(SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x);
 						this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
 						OBSTACLES.NB_OBS_MAX = SETTINGS.OBSTACLE.NB_OBS_MAX;
-						this.NB_SWITCH++;
+						this.STATE.NB_SWITCH++;
 					}
 					break;
 			}
@@ -132,11 +126,16 @@ var GAME = {
         requestAnimationFrame(function (time) {self.animate(time);});
     },
     over: function() {
-        CONTEXT.TEXT.drawImage(IMG.OVER, 0, 0, 191, 56, WIDTH/2-115, HEIGHT/3,230,67);
+		var img = new Image();
+		img.src = FILES.GAME_OVER;
+		img.onload = function() {
+			CONTEXT.TEXT.drawImage(img, 0, 0, 191, 56, WIDTH/2-115, HEIGHT/3,230,67);
+		}
+        
         
     },
     reset: function() {
-        this.GAME_OVER = false;
+        this.STATE.GAME_OVER = false;
         this.LAST_TIME = 0;
 		this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
         PLAYER.reset();
@@ -145,7 +144,7 @@ var GAME = {
         this.start();
     },
     stop: function() {
-        this.PAUSE = true;
+        this.STATE.PAUSE = true;
     },
 	collision: function() {
 		var player_box = PLAYER.get_hitbox();
@@ -158,7 +157,7 @@ var GAME = {
 					    && player_box[j].x + player_box[j].width > obs_box[k].x
 					    && player_box[j].y < obs_box[k].y + obs_box[k].height
 					    && player_box[j].y + player_box[j].width > obs_box[k].y) {
-						this.GAME_OVER = true;
+						this.STATE.GAME_OVER = true;
 						AUDIO.FILES.HIT.play();
 					}
 				}
@@ -178,5 +177,8 @@ var GAME = {
     toggle_hitbox: function() {
         PLAYER.toggle_hitbox();
         OBSTACLES.toggle_hitbox();
-    }
+    },
+	toggle_collision: function() {
+		this.STATE.COLLISION = !this.STATE.COLLISION;
+	}
 };
