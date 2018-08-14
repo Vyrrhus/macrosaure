@@ -20,9 +20,9 @@ var BACKGROUND = {
         }
     },
     
-    set_speed: function() {
+    set_difficulty: function() {
         for (var i = 0 ; i < this.LAYERS.length ; i++) {
-            this.LAYERS[i].set_speed(SPEED.MOTION.rate_background(SCORE.SCORE));
+			this.LAYERS[i].set_speed(SPEED.MOTION.FUNC.ALL());
         }
     },
     

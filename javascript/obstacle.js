@@ -72,19 +72,19 @@ var OBSTACLES = {
                 this.CURRENT_GAP -= obstacle.frame.reference.width;
                 this.CALQUE.push(obstacle);
                 this.NB_CURRENT_OBS++;
-                console.log(`+ OBS "${obstacle.frame.name}"`)
+                console.log(`+ OBS "${obstacle.frame.name}"`);
             }
         } else {
             this.CURRENT_BLOCKED = SETTINGS.OBSTACLE.NB_PIXEL_BLOCKED;
         }
     },
     
-    set_speed: function() {
-        this.VELOCITY = SPEED.MOTION.GROUND * SPEED.MOTION.rate_background(SCORE.SCORE) + SPEED.MOTION.OBSTACLE;
+    set_difficulty: function() {
+        this.VELOCITY = SPEED.MOTION.GROUND * SPEED.MOTION.FUNC.ALL() + SPEED.MOTION.OBSTACLE;
         this.set_gap();
         var rate_animation = 1 + 2.2*Math.tanh(SCORE.SCORE/1500);
         for (var i = 0 ; i < this.NB_OBS ; i++) {
-            FRAMES.OBSTACLE.list[i].set_speed(rate_animation);
+            FRAMES.OBSTACLE.list[i].set_speed(SPEED.MOTION.FUNC.ALL());
         }
     },
     

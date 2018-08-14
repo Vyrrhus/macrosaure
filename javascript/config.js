@@ -60,8 +60,10 @@ var SPEED = {
         GROUND: -150,   // PX/s
         SKY: -5,        // PX/s
         OBSTACLE: -20,  // PX/s
-		rate_background: function(score) {
-			return 1 + 4 * Math.tanh(score/3000)
+		FUNC: {
+			ALL: function() {
+				return SCORE.SPEED / SETTINGS.SCORE.MIN_PER_FRAME
+			}
 		}
     }
 };
@@ -96,7 +98,9 @@ var SETTINGS = {
 		OFFSET_COEFF: 3
 	},
 	SCORE: {
-		PER_FRAME: 0.1
+		MIN_PER_FRAME: 0.1281,
+		MAX_PER_FRAME: 0.325,
+		ACC: 0.00005
 	}
 }
 
@@ -202,6 +206,8 @@ var FRAMES = {
     }
 };
 
+
+// CLASS
 function frame(name, file, speed, options) {
     
 	// Self

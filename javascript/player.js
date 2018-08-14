@@ -63,9 +63,8 @@ var PLAYER = {
 		}
     },
     
-    set_speed: function() {
-        var rate = 1 + 2.2*Math.tanh(SCORE.SCORE/1500);
-        this.RUN.FRAME.set_speed(rate);
+    set_difficulty: function() {
+        this.RUN.FRAME.set_speed(SPEED.MOTION.FUNC.ALL());
     },
     
     switch_hitbox: function() {
