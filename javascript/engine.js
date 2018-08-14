@@ -90,7 +90,7 @@ var GAME = {
 					PLAYER.OFFSET.x -= transX;
 				}
 			} else {
-				SCORE.SCORE += SETTINGS.SCORE.PER_FRAME;
+				SCORE.set_score();
 				SCORE.drawScore();
 				this.setDifficulty();
 			}
@@ -116,13 +116,13 @@ var GAME = {
 			}
 		} else {
 			// SCORE
-			SCORE.SCORE+= SETTINGS.SCORE.PER_FRAME;
-			this.SCORE_UNTIL_SWITCH-= SETTINGS.SCORE.PER_FRAME;
+			SCORE.set_score();
 			SCORE.drawScore();
         
 			// DIFFICULTY
 			this.setDifficulty();
 		}
+		
         requestAnimationFrame(function (time) {self.animate(time);});
     },
     over: function() {
@@ -165,9 +165,9 @@ var GAME = {
 		}
 	},
     setDifficulty: function() {
-        BACKGROUND.set_speed();
-        OBSTACLES.set_speed();
-        PLAYER.set_speed();
+        BACKGROUND.set_difficulty();
+        OBSTACLES.set_difficulty();
+        PLAYER.set_difficulty();
     },
 	switch_side: function(x) {
 		BACKGROUND.switch_side();

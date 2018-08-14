@@ -25,11 +25,19 @@ var SCORE = {
         
         // Scores
         this.SCORE = 0;
+		this.SPEED = SETTINGS.SCORE.MIN_PER_FRAME
         this.NB_TRY++;
         
         CONTEXT.TEXT.clearRect(0,0,WIDTH,HEIGHT);
         
     },
+	set_score: function() {
+		this.SCORE += this.SPEED;
+		this.EVENT += this.SPEED;
+		if (this.SPEED < SETTINGS.SCORE.MAX_PER_FRAME) {
+			this.SPEED += SETTINGS.SCORE.ACC;
+		}
+	},
     drawChiffre: function(chiffre, x, y) {
         chiffre = parseInt(chiffre);
         this.CONTEXT.drawImage(this.IMG,
