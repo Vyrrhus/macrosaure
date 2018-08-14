@@ -87,10 +87,10 @@ var SETTINGS = {
         JUMP_TIME: 0.6      // secondes
     },
     OBSTACLE: {
-        NB_PIXEL_BLOCKED: 20,   // pixel
-        GAP_COEFF: 1.1,
-        WIDTH_COEFF: 0.5,
-        GENERATOR_COEFF: 0.1,
+        NB_PIXEL_BLOCKED: 15,   // pixel
+        GAP_COEFF: 0.8,
+        WIDTH_COEFF: 0.4,
+        GENERATOR_COEFF: 0.05,
         NB_OBS_MAX: 5
     },
 	SWITCH_MODE: {
@@ -122,11 +122,11 @@ var FRAMES = {
             
             // JUMP
             this.JUMP.add_tile(84,0,20,38);
-            this.JUMP.add_hitbox(1,[[2,0,13,21],[5,22,15,9]]);
+            this.JUMP.add_hitbox(1,[[2,0,13,21],[5,22,10,6]]);
             this.JUMP.add_tile(105,0,20,38);
-            this.JUMP.add_hitbox(2,[[2,0,13,21],[4,22,12,14]]);
+            this.JUMP.add_hitbox(2,[[2,0,13,21],[4,22,10,12]]);
             this.JUMP.add_tile(128,0,20,38);
-            this.JUMP.add_hitbox(3,[[2,0,11,21],[3,22,11,11]]);
+            this.JUMP.add_hitbox(3,[[2,0,11,21],[3,22,11,8]]);
         }
         
     },
@@ -395,11 +395,11 @@ function calque(ctx, frame, x, y) {
     };
     this.nb_frame = 0;
     this.frame = frame;
-	if (this.frame.tiles[0].type == "loop") {
+	if (this.frame.tiles[0].type != "loop") {
 		this.current_tile = 1;
 	} else {
 		this.current_tile = getRandom(1,this.frame.nb_max_tiles);
-	}    
+	}
     // Methods
     this.animate = function(fps) {
         var velocity = Math.trunc(fps / this.frame.speed);  // frame/image
