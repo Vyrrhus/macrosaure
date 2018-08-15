@@ -21,16 +21,51 @@ var CONTEXT = {
 };
 
 // IMAGE FILES
-var FILES = {
-    SCORE: 'assets/score.png',
-    PLAYER: 'assets/macron.png',
-    OBSTACLE: 'assets/obs.png',
-    GROUND: 'assets/ground.png',
-    SKY: 'assets/sky.png',
-	GAME_OVER: 'assets/over.png',
-	loading: {
-		NAME: 'RUN',
-		state: false
+var IMAGE = {
+	FILES: {
+		
+	},
+	STATE: {
+		
+	},
+	PATH: {
+		SCORE: 'assets/score.png',
+		PLAYER: 'assets/macron.png',
+		OBSTACLE: 'assets/obs.png',
+		GROUND: 'assets/ground.png',
+		SKY: 'assets/sky.png',
+		GAME_OVER: 'assets/over.png'
+	},
+	init: function() {
+		var self = this;
+		for (var element in this.PATH) {
+			// Img status (true if loaded, else false)
+			this.STATE[element] = false;
+			
+			// Img element
+			this.FILES[element] = new Image();
+			this.FILES[element].src = this.PATH[element];
+			this.FILES[element].name = element;
+			this.FILES[element].onload = function() {
+				self.STATE[this.name] = true;
+			}
+		}
+	},
+	process: function() {
+		var fail = false;
+		for (var element in this.STATE) {
+			if (this.STATE[element] !== true) {
+				fail = true;
+				break;
+			}
+		}
+		if (!fail) {
+			BACKGROUND.run(GAME.START_FPS);
+			PLAYER.RUN.FRAME.draw(CONTEXT.MACRON, 1, POSITION.player_offset_x, POSITION.get_ground());
+			return
+		}
+		console.log('nope');
+		window.setTimeout(this.process, 50);
 	}
 };
 
@@ -60,11 +95,6 @@ var SPEED = {
         GROUND: -150,   // PX/s
         SKY: -5,        // PX/s
         OBSTACLE: -20,  // PX/s
-		FUNC: {
-			ALL: function() {
-				return SCORE.SPEED / SETTINGS.SCORE.MIN_PER_FRAME
-			}
-		}
     }
 };
 
@@ -107,10 +137,9 @@ var SETTINGS = {
 // FRAMES
 var FRAMES = {
     PLAYER: {
-        JUMP: new frame('JUMP', FILES.PLAYER, SPEED.ANIMATION.JUMP),
-        RUN: new frame('RUN', FILES.PLAYER, SPEED.ANIMATION.RUN),
         init: function() {
             // RUN
+			this.RUN = new frame('RUN', IMAGE.FILES.PLAYER, SPEED.ANIMATION.RUN);
             this.RUN.add_tile(0,0,19,38);
             this.RUN.add_hitbox(1,[[4,2,12,21],[5,21,7,18]]);
             this.RUN.add_tile(21,0,19,38);
@@ -121,6 +150,7 @@ var FRAMES = {
             this.RUN.add_hitbox(4,[[4,2,12,21],[5,21,11,18]]);
             
             // JUMP
+			this.JUMP = new frame('JUMP', IMAGE.FILES.PLAYER, SPEED.ANIMATION.JUMP);
             this.JUMP.add_tile(84,0,20,38);
             this.JUMP.add_hitbox(1,[[2,0,13,21],[5,22,10,6]]);
             this.JUMP.add_tile(105,0,20,38);
@@ -128,13 +158,11 @@ var FRAMES = {
             this.JUMP.add_tile(128,0,20,38);
             this.JUMP.add_hitbox(3,[[2,0,11,21],[3,22,11,8]]);
         }
-        
     },
     OBSTACLE: {
-        CAMERA: new frame('CAMERA', FILES.OBSTACLE, SPEED.ANIMATION.OBSTACLE),
-        SPEAKER: new frame('SPEAKER', FILES.OBSTACLE, SPEED.ANIMATION.OBSTACLE),
         init: function() {
             // CAMERA
+			this.CAMERA = new frame('CAMERA', IMAGE.FILES.OBSTACLE, SPEED.ANIMATION.OBSTACLE);
             this.CAMERA.add_tile(0,0,22,30);
             this.CAMERA.add_hitbox(1,[[2,1,16,10]]);
             this.CAMERA.add_tile(23,0,22,30);
@@ -145,6 +173,7 @@ var FRAMES = {
             this.CAMERA.add_hitbox(4,[[2,1,16,10]]);
             
             // SPEAKER
+			this.SPEAKER = new frame('SPEAKER', IMAGE.FILES.OBSTACLE, SPEED.ANIMATION.OBSTACLE);
             this.SPEAKER.add_tile(0,31,22,32);
             this.SPEAKER.add_hitbox(1,[[11,5,11,27],[1,8,10,10]]);
             this.SPEAKER.add_tile(23,31,22,32);
@@ -159,33 +188,34 @@ var FRAMES = {
     },
     BACKGROUND: {
         GROUND: {
-            1: new frame('GROUND 1', FILES.GROUND, 0),
-            2: new frame('GROUND 2', FILES.GROUND, 0),
-            3: new frame('GROUND 3', FILES.GROUND, 0),
-            4: new frame('GROUND 4', FILES.GROUND, 0),
-            5: new frame('GROUND 5', FILES.GROUND, 0),
-            6: new frame('GROUND 6', FILES.GROUND, 0),
-            7: new frame('GROUND 7', FILES.GROUND, 0)
         },
         SKY: {
-            1: new frame('CLOUD 1', FILES.SKY, 0),
-            2: new frame('CLOUD 2', FILES.SKY, 0),
-            3: new frame('CLOUD 3', FILES.SKY, 0)
         },
         init: function() {
             // GROUND
+			this.GROUND[1] = new frame('GROUND 1', IMAGE.FILES.GROUND, 0);
             this.GROUND[1].add_tile(0,0,196,14);
+			this.GROUND[2] = new frame('GROUND 2', IMAGE.FILES.GROUND, 0);
             this.GROUND[2].add_tile(197,0,201,14);
+			this.GROUND[3] = new frame('GROUND 3', IMAGE.FILES.GROUND, 0);
             this.GROUND[3].add_tile(399,0,237,14);
+			this.GROUND[4] = new frame('GROUND 4', IMAGE.FILES.GROUND, 0);
             this.GROUND[4].add_tile(637,0,113,14);
+			this.GROUND[5] = new frame('GROUND 5', IMAGE.FILES.GROUND, 0);
             this.GROUND[5].add_tile(708,0,81,14);
+			this.GROUND[6] = new frame('GROUND 6', IMAGE.FILES.GROUND, 0);
             this.GROUND[6].add_tile(760,0,156,14);
+			this.GROUND[7] = new frame('GROUND 7', IMAGE.FILES.GROUND, 0);
             this.GROUND[7].add_tile(1044,0,158,14);
+			
             this.list_ground = [this.GROUND[1], this.GROUND[2], this.GROUND[3], this.GROUND[4], this.GROUND[5], this.GROUND[6], this.GROUND[7]];
             
             // SKY
+			this.SKY[1] = new frame('CLOUD 1', IMAGE.FILES.SKY, 0);
             this.SKY[1].add_tile(0,0,46,39);
+			this.SKY[2] = new frame('CLOUD 2', IMAGE.FILES.SKY, 0);
             this.SKY[2].add_tile(47,0,46,39);
+			this.SKY[3] = new frame('CLOUD 3', IMAGE.FILES.SKY, 0);
             this.SKY[3].add_tile(94,0,46,39);
             this.list_sky = [this.SKY[1], this.SKY[2], this.SKY[3]];
         }
@@ -194,35 +224,19 @@ var FRAMES = {
         this.PLAYER.init();
         this.OBSTACLE.init();
         this.BACKGROUND.init();
-		processImage();
-		
-		function processImage() {
-			if (FILES.loading.state) {
-				FRAMES.PLAYER.RUN.draw(CONTEXT.BACKGROUND, 1, POSITION.player_offset_x, POSITION.get_people());
-				return
-			}
-			window.setTimeout(processImage, 50);
-		}
     }
 };
 
 
 // CLASS
-function frame(name, file, speed, options) {
+function frame(name, image, speed, options) {
     
 	// Self
 	var self = this;
 	
     // Parameters
     this.name = name;
-    this.file = file;
-    this.image = new Image();
-	this.image.onload = function() {
-		if (self.name = FILES.loading.NAME) {
-			FILES.loading.state = true;
-		}
-	}
-    this.image.src = this.file;
+    this.image = image;
     this.default_speed = speed;     // image/s
     this.speed = speed;             // image/s
     this.reference = {

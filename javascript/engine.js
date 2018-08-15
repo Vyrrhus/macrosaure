@@ -20,14 +20,16 @@ var GAME = {
 		NB_SWITCH: 1,
 		COLLISION: true
 	},
+	SCORE_UNTIL_SWITCH: SETTINGS.SWITCH_MODE.SCORE,
     init: function() {
-		this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
+		IMAGE.init();
 		AUDIO.init();
         FRAMES.init();
         BACKGROUND.init(CONTEXT.BACKGROUND);
         OBSTACLES.init(CONTEXT.OBSTACLE);
         PLAYER.init(CONTEXT.MACRON);
         SCORE.init(CONTEXT.TEXT);
+		IMAGE.process();
     },
     start: function() {
         var self = this;
@@ -126,13 +128,7 @@ var GAME = {
         requestAnimationFrame(function (time) {self.animate(time);});
     },
     over: function() {
-		var img = new Image();
-		img.src = FILES.GAME_OVER;
-		img.onload = function() {
-			CONTEXT.TEXT.drawImage(img, 0, 0, 191, 56, WIDTH/2-115, HEIGHT/3,230,67);
-		}
-        
-        
+		CONTEXT.TEXT.drawImage(IMAGE.FILES.GAME_OVER, 0, 0, 191, 56, WIDTH/2-115, HEIGHT/3,230,67);
     },
     reset: function() {
         this.STATE.GAME_OVER = false;
