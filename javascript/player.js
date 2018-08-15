@@ -64,7 +64,7 @@ var PLAYER = {
     },
     
     set_difficulty: function() {
-        this.RUN.FRAME.set_speed(SPEED.MOTION.FUNC.ALL());
+        this.RUN.FRAME.set_speed(SCORE.get_rate());
     },
     
     switch_hitbox: function() {

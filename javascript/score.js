@@ -18,11 +18,6 @@ var SCORE = {
         // Context
         this.CONTEXT = ctx;
         
-        // Image
-        img = new Image();
-        img.src = FILES.SCORE;
-        this.IMG = img;
-        
         // Scores
         this.SCORE = 0;
 		this.SPEED = SETTINGS.SCORE.MIN_PER_FRAME
@@ -38,9 +33,12 @@ var SCORE = {
 			this.SPEED += SETTINGS.SCORE.ACC;
 		}
 	},
+	get_rate: function() {
+		return this.SPEED / SETTINGS.SCORE.MIN_PER_FRAME;
+	},
     drawChiffre: function(chiffre, x, y) {
         chiffre = parseInt(chiffre);
-        this.CONTEXT.drawImage(this.IMG,
+        this.CONTEXT.drawImage(IMAGE.FILES.SCORE,
                                this.number[chiffre].x, 
                                this.number[chiffre].y, 
                                this.number[chiffre].w, 

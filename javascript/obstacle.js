@@ -80,11 +80,11 @@ var OBSTACLES = {
     },
     
     set_difficulty: function() {
-        this.VELOCITY = SPEED.MOTION.GROUND * SPEED.MOTION.FUNC.ALL() + SPEED.MOTION.OBSTACLE;
+        this.VELOCITY = SPEED.MOTION.GROUND * SCORE.get_rate() + SPEED.MOTION.OBSTACLE;
         this.set_gap();
         var rate_animation = 1 + 2.2*Math.tanh(SCORE.SCORE/1500);
         for (var i = 0 ; i < this.NB_OBS ; i++) {
-            FRAMES.OBSTACLE.list[i].set_speed(SPEED.MOTION.FUNC.ALL());
+            FRAMES.OBSTACLE.list[i].set_speed(SCORE.get_rate());
         }
     },
     

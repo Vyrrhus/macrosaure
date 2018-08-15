@@ -22,7 +22,7 @@ var BACKGROUND = {
     
     set_difficulty: function() {
         for (var i = 0 ; i < this.LAYERS.length ; i++) {
-			this.LAYERS[i].set_speed(SPEED.MOTION.FUNC.ALL());
+			this.LAYERS[i].set_speed(SCORE.get_rate());
         }
     },
     
