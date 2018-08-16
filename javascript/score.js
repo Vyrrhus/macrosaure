@@ -2,7 +2,7 @@ var SCORE = {
     size: 1.2,
     HIGHSCORE: 0,
     NB_TRY: 0,
-	MODE: 'SCORE',
+	MODE: 'DATE',
     number: [
         {x:0, y:0, w:9, h:11}, // 0
         {x:10, y:0, w:9, h:11}, // 1
