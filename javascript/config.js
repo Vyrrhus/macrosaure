@@ -64,7 +64,6 @@ var IMAGE = {
 			PLAYER.RUN.FRAME.draw(CONTEXT.MACRON, 1, POSITION.player_offset_x, POSITION.get_ground());
 			return
 		}
-		console.log('nope');
 		window.setTimeout(this.process, 50);
 	}
 };
