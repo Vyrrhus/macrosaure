@@ -32,6 +32,7 @@ var SCORE = {
 		if (this.SPEED < SETTINGS.SCORE.MAX_PER_FRAME) {
 			this.SPEED += SETTINGS.SCORE.ACC;
 		}
+		this.drawScore();
 	},
 	get_rate: function() {
 		return this.SPEED / SETTINGS.SCORE.MIN_PER_FRAME;

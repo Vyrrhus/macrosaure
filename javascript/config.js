@@ -123,10 +123,6 @@ var SETTINGS = {
         GENERATOR_COEFF: 0.05,
         NB_OBS_MAX: 5
     },
-	SWITCH_MODE: {
-		SCORE: 800,
-		OFFSET_COEFF: 3
-	},
 	SCORE: {
 		MIN_PER_FRAME: 0.1281,
 		MAX_PER_FRAME: 0.325,

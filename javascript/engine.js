@@ -1,8 +1,3 @@
-// TIME
-function getTimeNow() {
-    return new Date();
-}
-
 // RANDOM NUM
 function getRandom(min, max) {
 	if (max == 0) {return 0;}
@@ -17,10 +12,9 @@ var GAME = {
 	STATE: {
 		GAME_OVER: false,
 		PAUSE: false,
-		NB_SWITCH: 1,
-		COLLISION: true
+		COLLISION: false
 	},
-	SCORE_UNTIL_SWITCH: SETTINGS.SWITCH_MODE.SCORE,
+	MODE: 'NORMAL',
     init: function() {
 		IMAGE.init();
 		AUDIO.init();
@@ -72,68 +66,99 @@ var GAME = {
 		
         // RUNNING
         this.tick(time);
-        BACKGROUND.run(this.FPS);
-        OBSTACLES.run(this.FPS);
-        PLAYER.run(this.FPS);
+		
+		// MODE
+		switch (this.MODE) {
+			case 'NORMAL':
+				this.run();
+				break;
+			case 'TRANSLATION':
+				var PX_per_second = 5;
+				switch (PLAYER.RUNNING_SIDE) {
+					case 'forward':
+						PLAYER.OFFSET.x += PX_per_second / this.FPS; 	// PX/frame
+						break;
+					case 'backward':
+						PLAYER.OFFSET.x -= PX_per_second / this.FPS;	// PX/frame
+						break;
+				}
+				this.run();
+				break;
+		}
         
+		// COLLISION
 		if (this.STATE.COLLISION) {
 			this.collision();
 		}
 		
-		// SWITCH SIDE
-		if (this.SCORE_UNTIL_SWITCH < 0) {
-			OBSTACLES.NB_OBS_MAX = 0;
-			if (OBSTACLES.NB_CURRENT_OBS == 0) {
-				BACKGROUND.stop();
-				var transX = Math.abs((SPEED.MOTION.GROUND + SPEED.MOTION.OBSTACLE)/this.FPS);
-				if (PLAYER.RUNNING_SIDE == "forward") {
-					PLAYER.OFFSET.x += transX;
-				} else {
-					PLAYER.OFFSET.x -= transX;
-				}
-			} else {
-				SCORE.set_score();
-				SCORE.drawScore();
-				this.setDifficulty();
-			}
-			switch (PLAYER.RUNNING_SIDE) {
-				case "forward":
-					if (PLAYER.OFFSET.x >= WIDTH - SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x) {
-						PLAYER.switch_status();
-						this.switch_side(WIDTH - SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x);
-						this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
-						OBSTACLES.NB_OBS_MAX = SETTINGS.OBSTACLE.NB_OBS_MAX;
-						this.STATE.NB_SWITCH++;
-					}
-					break;
-				case "backward":
-					if (PLAYER.OFFSET.x <= SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x) {
-						PLAYER.switch_status();
-						this.switch_side(SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x);
-						this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
-						OBSTACLES.NB_OBS_MAX = SETTINGS.OBSTACLE.NB_OBS_MAX;
-						this.STATE.NB_SWITCH++;
-					}
-					break;
-			}
+		if (SCORE.SCORE > 1000 && PLAYER.OFFSET.x < WIDTH / 2.5) {
+			this.MODE = 'TRANSLATION';
 		} else {
-			// SCORE
-			SCORE.set_score();
-			SCORE.drawScore();
-        
-			// DIFFICULTY
-			this.setDifficulty();
+			this.MODE = 'NORMAL'
 		}
+		
+		// SCORE
+		SCORE.set_score();
+		this.set_difficulty();
+		
+//		// SWITCH SIDE
+//		if (false) {
+//			OBSTACLES.NB_OBS_MAX = 0;
+//			if (OBSTACLES.NB_CURRENT_OBS == 0) {
+//				BACKGROUND.stop();
+//				var transX = Math.abs((SPEED.MOTION.GROUND + SPEED.MOTION.OBSTACLE)/this.FPS);
+//				if (PLAYER.RUNNING_SIDE == "forward") {
+//					PLAYER.OFFSET.x += transX;
+//				} else {
+//					PLAYER.OFFSET.x -= transX;
+//				}
+//			} else {
+//				SCORE.set_score();
+//				SCORE.drawScore();
+//				this.setDifficulty();
+//			}
+//			switch (PLAYER.RUNNING_SIDE) {
+//				case "forward":
+//					if (PLAYER.OFFSET.x >= WIDTH - SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x) {
+//						PLAYER.switch_status();
+//						this.switch_side(WIDTH - SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x);
+//						this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
+//						OBSTACLES.NB_OBS_MAX = SETTINGS.OBSTACLE.NB_OBS_MAX;
+//						this.STATE.NB_SWITCH++;
+//					}
+//					break;
+//				case "backward":
+//					if (PLAYER.OFFSET.x <= SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x) {
+//						PLAYER.switch_status();
+//						this.switch_side(SETTINGS.SWITCH_MODE.OFFSET_COEFF * POSITION.player_offset_x);
+//						this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
+//						OBSTACLES.NB_OBS_MAX = SETTINGS.OBSTACLE.NB_OBS_MAX;
+//						this.STATE.NB_SWITCH++;
+//					}
+//					break;
+//			}
+//		} else {
+//			// SCORE
+//			SCORE.set_score();
+//			SCORE.drawScore();
+//        
+//			// DIFFICULTY
+//			this.setDifficulty();
+//		}
 		
         requestAnimationFrame(function (time) {self.animate(time);});
     },
+	run: function() {
+		BACKGROUND.run(this.FPS);
+		OBSTACLES.run(this.FPS);
+		PLAYER.run(this.FPS);
+	},
     over: function() {
 		CONTEXT.TEXT.drawImage(IMAGE.FILES.GAME_OVER, 0, 0, 191, 56, WIDTH/2-115, HEIGHT/3,230,67);
     },
     reset: function() {
         this.STATE.GAME_OVER = false;
         this.LAST_TIME = 0;
-		this.SCORE_UNTIL_SWITCH = SETTINGS.SWITCH_MODE.SCORE;
         PLAYER.reset();
         OBSTACLES.reset();
         SCORE.reset();
@@ -160,7 +185,7 @@ var GAME = {
 			}
 		}
 	},
-    setDifficulty: function() {
+    set_difficulty: function() {
         BACKGROUND.set_difficulty();
         OBSTACLES.set_difficulty();
         PLAYER.set_difficulty();
