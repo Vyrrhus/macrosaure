@@ -62,6 +62,9 @@ document.addEventListener('keydown', function(event) {
 	if (event.keyCode == 96) {
 		GAME.toggle_collision();
 	}
+	if (event.keyCode == 77) {
+		SCORE.toggle_mode();
+	}
 });
 
 // FUNCTIONS

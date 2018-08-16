@@ -53,7 +53,7 @@ var GAME = {
         
         // GAME OVER
         if (this.STATE.GAME_OVER) {
-            SCORE.drawHighScore();
+            SCORE.draw_highScore();
             this.over();
             return;
         }
