@@ -6,9 +6,18 @@ var BACKGROUND = {
         
         // Layers
         this.LAYERS = [];
-        var GROUND = new layer(this.CONTEXT, FRAMES.BACKGROUND.list_ground, SPEED.MOTION.GROUND, true, 1, 0, POSITION.get_ground);
-        var SKY = new layer(this.CONTEXT, FRAMES.BACKGROUND.list_sky, SPEED.MOTION.SKY, false, 0.1, 100, POSITION.get_sky);
-        this.LAYERS.push(GROUND, SKY);
+		var SKY = new layer(this.CONTEXT, FRAMES.BACKGROUND.list_sky, 0, true, 1, 0, POSITION.get_level_foreground);
+		var MOUTAIN = new layer(this.CONTEXT, FRAMES.BACKGROUND.list_moutain, SPEED.MOTION.MOUTAIN, true, 1, 0, POSITION.get_level_moutain);
+		var CLOUDS = new layer(this.CONTEXT, FRAMES.BACKGROUND.list_cloud, SPEED.MOTION.CLOUDS, false, 0.25, 75, POSITION.get_clouds);
+		var FOREGROUND = new layer(this.CONTEXT, FRAMES.BACKGROUND.list_foreground, SPEED.MOTION.FOREGROUND, true, 1, 0, POSITION.get_level_foreground);
+		var BUILDING = new layer(this.CONTEXT, FRAMES.BACKGROUND.list_building, SPEED.MOTION.BUILDING, false, 0.2, 50, POSITION.get_level_foreground);
+		var SIDEWALK = new layer(this.CONTEXT, FRAMES.BACKGROUND.list_sidewalk, SPEED.MOTION.BUILDING, true, 1, 0, POSITION.get_level_sidewalk);
+		var PAVEMENT = new layer(this.CONTEXT, FRAMES.BACKGROUND.list_pavement, SPEED.MOTION.BUILDING, true, 1, 0, POSITION.get_level_pavement);
+		var SEWER = new layer(this.CONTEXT, FRAMES.BACKGROUND.list_sewer, SPEED.MOTION.BUILDING, false, 0.05, 128, POSITION.get_level_pavement);
+		var ROAD = new layer(this.CONTEXT, FRAMES.BACKGROUND.list_road, SPEED.MOTION.BUILDING, true, 1, 0, POSITION.get_level_road);
+		
+		// Pushing
+        this.LAYERS.push(SKY, MOUTAIN, CLOUDS, FOREGROUND, BUILDING, SIDEWALK, PAVEMENT, SEWER, ROAD);
     },
     
     

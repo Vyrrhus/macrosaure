@@ -8,7 +8,7 @@ var CANVAS = {
 
 // CANVAS SIZE
 var WIDTH_TO_HEIGHT_RATIO = 3;
-var MAX_WIDTH = 800-800%3;
+var MAX_WIDTH = 1143;
 var WIDTH   = CANVAS.BACKGROUND.width;
 var HEIGHT  = CANVAS.BACKGROUND.height;
 
@@ -32,9 +32,19 @@ var IMAGE = {
 		SCORE: 'assets/score.png',
 		PLAYER: 'assets/macron.png',
 		OBSTACLE: 'assets/obs.png',
-		GROUND: 'assets/ground.png',
-		SKY: 'assets/sky.png',
-		GAME_OVER: 'assets/over.png'
+		GAME_OVER: 'assets/over.png',
+		
+		
+		SKY: 'assets/background/sky.png',
+		CLOUDS: 'assets/background/clouds.png',
+		TREES: 'assets/background/trees.png',
+		MOUTAIN: 'assets/background/moutain.png',
+		FOREGROUND: 'assets/background/foreground.png',
+		BUILDING: 'assets/background/building.png',
+		SIDEWALK: 'assets/background/sidewalk.png',
+		PAVEMENT: 'assets/background/pavement.png',
+		SEWER: 'assets/background/sewer.png',
+		ROAD: 'assets/background/road.png'
 	},
 	init: function() {
 		var self = this;
@@ -91,6 +101,11 @@ var SPEED = {
         OBSTACLE: 4     // img/s
     },
     MOTION: {
+		CLOUDS: -5,			// PX/s
+		MOUTAIN: -0.2,		// PX/s
+		FOREGROUND: -60,	// PX/s
+		BUILDING: -150,		// PX/s
+		
         GROUND: -150,   // PX/s
         SKY: -5,        // PX/s
         OBSTACLE: -20,  // PX/s
@@ -99,6 +114,24 @@ var SPEED = {
 
 var POSITION = {
     player_offset_x: 0.1*WIDTH,
+	get_level_road: function() {
+		return 256 + 29 + 32 + 64
+	},
+	get_level_pavement: function() {
+		return 256 + 29 + 32
+	},
+	get_level_sidewalk: function() {
+		return 256 + 29;
+	},
+	get_level_foreground: function() {
+		return 256
+	},
+	get_level_moutain: function() {
+		return 256
+	},
+	get_clouds: function() {
+		return getRandom(HEIGHT/16, HEIGHT/2)
+	},
     get_ground: function() {
         return 0.8*HEIGHT;
     },
@@ -186,33 +219,117 @@ var FRAMES = {
         },
         SKY: {
         },
-        init: function() {
-            // GROUND
-			this.GROUND[1] = new frame('GROUND 1', IMAGE.FILES.GROUND, 0);
-            this.GROUND[1].add_tile(0,0,196,14);
-			this.GROUND[2] = new frame('GROUND 2', IMAGE.FILES.GROUND, 0);
-            this.GROUND[2].add_tile(197,0,201,14);
-			this.GROUND[3] = new frame('GROUND 3', IMAGE.FILES.GROUND, 0);
-            this.GROUND[3].add_tile(399,0,237,14);
-			this.GROUND[4] = new frame('GROUND 4', IMAGE.FILES.GROUND, 0);
-            this.GROUND[4].add_tile(637,0,113,14);
-			this.GROUND[5] = new frame('GROUND 5', IMAGE.FILES.GROUND, 0);
-            this.GROUND[5].add_tile(708,0,81,14);
-			this.GROUND[6] = new frame('GROUND 6', IMAGE.FILES.GROUND, 0);
-            this.GROUND[6].add_tile(760,0,156,14);
-			this.GROUND[7] = new frame('GROUND 7', IMAGE.FILES.GROUND, 0);
-            this.GROUND[7].add_tile(1044,0,158,14);
+		CLOUDS: {
 			
-            this.list_ground = [this.GROUND[1], this.GROUND[2], this.GROUND[3], this.GROUND[4], this.GROUND[5], this.GROUND[6], this.GROUND[7]];
-            
+		},
+		TREES: {
+			
+		},
+		MOUTAIN: {
+			
+		},
+		FOREGROUND: {
+			
+		},
+		BUILDING: {
+			
+		},
+		SIDEWALK: {
+			
+		},
+		PAVEMENT: {
+			
+		},
+		SEWER: {
+			
+		},
+		ROAD: {
+			
+		},
+        init: function() {
             // SKY
-			this.SKY[1] = new frame('CLOUD 1', IMAGE.FILES.SKY, 0);
-            this.SKY[1].add_tile(0,0,46,39);
-			this.SKY[2] = new frame('CLOUD 2', IMAGE.FILES.SKY, 0);
-            this.SKY[2].add_tile(47,0,46,39);
-			this.SKY[3] = new frame('CLOUD 3', IMAGE.FILES.SKY, 0);
-            this.SKY[3].add_tile(94,0,46,39);
-            this.list_sky = [this.SKY[1], this.SKY[2], this.SKY[3]];
+			this.SKY[1] = new frame('SKY 1', IMAGE.FILES.SKY, 0);
+            this.SKY[1].add_tile(0,0,4,256);
+            this.list_sky = [this.SKY[1]];
+			
+			// CLOUDS
+			this.CLOUDS[1] = new frame('CLOUDS 1', IMAGE.FILES.CLOUDS, 0);
+			this.CLOUDS[1].add_tile(0,0,256,128);
+			this.CLOUDS[2] = new frame('CLOUDS 2', IMAGE.FILES.CLOUDS, 0);
+			this.CLOUDS[2].add_tile(256,0,256,128);
+			this.CLOUDS[3] = new frame('CLOUDS 3', IMAGE.FILES.CLOUDS, 0);
+			this.CLOUDS[3].add_tile(512,0,128,128);
+			this.CLOUDS[4] = new frame('CLOUDS 4', IMAGE.FILES.CLOUDS, 0);
+			this.CLOUDS[4].add_tile(640,0,128,128);
+			this.CLOUDS[5] = new frame('CLOUDS 5', IMAGE.FILES.CLOUDS, 0);
+			this.CLOUDS[5].add_tile(768,0,128,64);
+			this.CLOUDS[6] = new frame('CLOUDS 6', IMAGE.FILES.CLOUDS, 0);
+			this.CLOUDS[6].add_tile(768,64,128,64);
+			this.CLOUDS[7] = new frame('CLOUDS 7', IMAGE.FILES.CLOUDS, 0);
+			this.CLOUDS[7].add_tile(896,0,128,32);
+			this.CLOUDS[8] = new frame('CLOUDS 8', IMAGE.FILES.CLOUDS, 0);
+			this.CLOUDS[8].add_tile(896,32,128,32);
+			this.CLOUDS[9] = new frame('CLOUDS 9', IMAGE.FILES.CLOUDS, 0);
+			this.CLOUDS[9].add_tile(896,64,128,32);
+			this.CLOUDS[10] = new frame('CLOUDS 10', IMAGE.FILES.CLOUDS, 0);
+			this.CLOUDS[10].add_tile(896,96,128,32);
+			this.list_cloud = [this.CLOUDS[1], this.CLOUDS[2], this.CLOUDS[3], this.CLOUDS[4], this.CLOUDS[5], this.CLOUDS[6], this.CLOUDS[7], this.CLOUDS[8], this.CLOUDS[9], this.CLOUDS[10]];
+			
+			// TREES
+			this.TREES[1] = new frame('TREES 1', IMAGE.FILES.TREES, 0);
+			this.TREES[1].add_tile(0,0,256,256);
+			this.TREES[2] = new frame('TREES 2', IMAGE.FILES.TREES, 0);
+			this.TREES[2].add_tile(0,256,256,256);
+			this.TREES[3] = new frame('TREES 3', IMAGE.FILES.TREES, 0);
+			this.TREES[3].add_tile(0,512,256,318);
+			this.list_trees = [this.TREES[1], this.TREES[2], this.TREES[3]];
+			
+			// MOUTAIN
+			this.MOUTAIN[1] = new frame('MOUTAIN 1', IMAGE.FILES.MOUTAIN, 0);
+			this.MOUTAIN[1].add_tile(0,0,512,170);
+			this.list_moutain = [this.MOUTAIN[1]];
+			
+			// FOREGROUND
+			this.FOREGROUND[1] = new frame('FOREGROUND 1', IMAGE.FILES.FOREGROUND, 0);
+			this.FOREGROUND[1].add_tile(0,0,512,98);
+			this.list_foreground = [this.FOREGROUND[1]];
+			
+			// BUILDING
+			this.BUILDING[1] = new frame('BUILDING 1', IMAGE.FILES.BUILDING, 0);
+			this.BUILDING[1].add_tile(0,0,128,256);
+			this.BUILDING[2] = new frame('BUILDING 2', IMAGE.FILES.BUILDING, 0);
+			this.BUILDING[2].add_tile(129,0,384,256);
+			this.BUILDING[3] = new frame('BUILDING 3', IMAGE.FILES.BUILDING, 0);
+			this.BUILDING[3].add_tile(515,0,384,256);
+			this.BUILDING[4] = new frame('BUILDING 4', IMAGE.FILES.BUILDING, 0);
+			this.BUILDING[4].add_tile(899,0,544,256);
+			this.BUILDING[5] = new frame('BUILDING 5', IMAGE.FILES.BUILDING, 0);
+			this.BUILDING[5].add_tile(1443,0,177,256);
+			this.BUILDING[6] = new frame('BUILDING 6', IMAGE.FILES.BUILDING, 0);
+			this.BUILDING[6].add_tile(1621,0,305,256);
+			this.list_building = [this.BUILDING[1], this.BUILDING[2], this.BUILDING[3], this.BUILDING[4], this.BUILDING[5], this.BUILDING[6]];
+			
+			// SIDEWALK
+			this.SIDEWALK[1] = new frame('SIDEWALK 1', IMAGE.FILES.SIDEWALK, 0);
+			this.SIDEWALK[1].add_tile(0,0,512,29);
+			this.list_sidewalk = [this.SIDEWALK[1]];
+			
+			// PAVEMENT
+			this.PAVEMENT[1] = new frame('PAVEMENT 1', IMAGE.FILES.PAVEMENT, 0);
+			this.PAVEMENT[1].add_tile(0,0,32,32);
+			this.list_pavement = [this.PAVEMENT[1]];
+			
+			// SEWER
+			this.SEWER[1] = new frame('SEWER 1', IMAGE.FILES.SEWER, 0);
+			this.SEWER[1].add_tile(0,0,32,14);
+			this.list_sewer = [this.SEWER[1]];
+			
+			// ROAD
+			this.ROAD[1] = new frame('ROAD 1', IMAGE.FILES.ROAD, 0);
+			this.ROAD[1].add_tile(0,0,64,64);
+			this.list_road = [this.ROAD[1]];
+			
+			
         }
     },
     init: function() {
@@ -278,8 +395,14 @@ function frame(name, image, speed, options) {
             y: y,
             width: w,
             height: h,
+			swidth: w,
+			sheight: h,
 			type: options.type
         };
+		if (options.scale !== undefined) {
+			tile.swidth *= options.scale;
+			tile.sheight *= options.scale;
+		}
 		
         this.tiles.push(tile);
         this.set_ref();
@@ -317,8 +440,8 @@ function frame(name, image, speed, options) {
                       this.tiles[num_tile-1].height,
                       - x,
                       y - this.reference.height,
-                      - this.tiles[num_tile-1].width,
-                      this.tiles[num_tile-1].height);
+                      - this.tiles[num_tile-1].swidth,
+                      this.tiles[num_tile-1].sheight);
 			ctx.restore();
 		}
 		else {
@@ -330,8 +453,8 @@ function frame(name, image, speed, options) {
                       this.tiles[num_tile-1].height,
                       x,
                       y - this.reference.height,
-                      this.tiles[num_tile-1].width,
-                      this.tiles[num_tile-1].height);
+                      this.tiles[num_tile-1].swidth,
+                      this.tiles[num_tile-1].sheight);
 			ctx.restore();
 		}
 		
