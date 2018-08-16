@@ -12,7 +12,7 @@ var GAME = {
 	STATE: {
 		GAME_OVER: false,
 		PAUSE: false,
-		COLLISION: false
+		COLLISION: true
 	},
 	MODE: 'NORMAL',
     init: function() {
@@ -27,7 +27,6 @@ var GAME = {
     },
     start: function() {
         var self = this;
-        this.STATE.PAUSE = false;
         requestAnimationFrame(function (time) {self.animate(time);});
     },
     tick: function(time) {
@@ -61,7 +60,7 @@ var GAME = {
         
         // PAUSE
         if (this.STATE.PAUSE) {
-            return;
+            return requestAnimationFrame(function (time) {self.animate(time);})
         }
 		
         // RUNNING
@@ -163,9 +162,6 @@ var GAME = {
         OBSTACLES.reset();
         SCORE.reset();
         this.start();
-    },
-    stop: function() {
-        this.STATE.PAUSE = true;
     },
 	collision: function() {
 		var player_box = PLAYER.get_hitbox();

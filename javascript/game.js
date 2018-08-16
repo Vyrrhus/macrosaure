@@ -8,6 +8,14 @@ window.onload = function() {
 	GAME.init();
 };
 
+window.onfocus = function() {
+	GAME.STATE.PAUSE = false;
+}
+
+window.onblur = function() {
+	GAME.STATE.PAUSE = true;
+}
+
 window.addEventListener('resize', set_screen, false);
 
 document.addEventListener('touchstart', function(event) {
