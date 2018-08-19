@@ -104,7 +104,7 @@ var SETTINGS = {
 			get_sky: function() {return getRandom(0.2*HEIGHT, 0.4*HEIGHT);},
 			get_people: function() {return this.get_ground() - 0.02 * HEIGHT;},
 			get_drone: function() {
-				if (Math.random > p) {p++;}
+				return this.get_people() - 60;
 			}
 		},
 		X: {
