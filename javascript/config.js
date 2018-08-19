@@ -126,8 +126,8 @@ var SETTINGS = {
 				this.GENERATOR_COEFF = 0.05;
 				this.NB_OBS_MAX = 5;
 				this.FLYING = {
-					LIKELIHOOD: 0.2,
-					SCORE_MIN: 400
+					LIKELIHOOD: 1,
+					SCORE_MIN: 0
 				};
 			}
 		},
