@@ -56,7 +56,7 @@ var OBSTACLES = {
         if (p > 1 - SETTINGS.PARAMETERS.OBS.GENERATOR_COEFF || this.NB_CURRENT_OBS == 0) {
             this.CURRENT_GAP = 0;
 			
-			if (Math.random() > 1 - SETTINGS.PARAMETERS.OBS.FLYING.LIKELIHOOD && SCORE.SCORE > SETTINGS.PARAMETERS.OBS.FLYING.SCORE) {
+			if (Math.random() > 1 - SETTINGS.PARAMETERS.OBS.FLYING.LIKELIHOOD && SCORE.SCORE > SETTINGS.PARAMETERS.OBS.FLYING.SCORE_MIN) {
 				var num = getRandom(1, this.NB_FLYING_OBS);
 				if (this.RUNNING_SIDE == "forward") {
 					var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list_flying[num-1], WIDTH, SETTINGS.OFFSET.HEIGHT.get_drone(), {motion: function() {this.position.angle++;}});
