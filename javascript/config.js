@@ -61,11 +61,11 @@ var IMAGE = {
 		}
 		if (!fail) {
 			BACKGROUND.run(GAME.START_FPS);
-			PLAYER.RUN.FRAME.draw(CONTEXT.MACRON, 1, POSITION.player_offset_x, POSITION.get_ground());
+			PLAYER.RUN.FRAME.before_draw(CONTEXT.MACRON, 1, POSITION.player_offset_x, POSITION.get_ground());
 			return
 		}
 		window.setTimeout(this.process, 50);
-	}
+	},
 };
 
 // AUDIO FILES
@@ -117,7 +117,7 @@ var SETTINGS = {
     },
     OBSTACLE: {
         NB_PIXEL_BLOCKED: 15,   // pixel
-        GAP_COEFF: 0.8,
+        GAP_COEFF: 0.9,
         WIDTH_COEFF: 0.4,
         GENERATOR_COEFF: 0.05,
         NB_OBS_MAX: 5
@@ -134,7 +134,7 @@ var FRAMES = {
     PLAYER: {
         init: function() {
             // RUN
-			this.RUN = new frame('RUN', IMAGE.FILES.PLAYER, SPEED.ANIMATION.RUN);
+			this.RUN = new frame('RUN', IMAGE.FILES.PLAYER, SPEED.ANIMATION.RUN, {motion: function() {this.motion_settings.rotation+=0.5;}});
             this.RUN.add_tile(0,0,19,38);
             this.RUN.add_hitbox(1,[[4,2,12,21],[5,21,7,18]]);
             this.RUN.add_tile(21,0,19,38);
@@ -177,6 +177,9 @@ var FRAMES = {
             this.SPEAKER.add_hitbox(3,[[11,5,11,27],[1,9,10,10]]);
             this.SPEAKER.add_tile(69,31,22,32);
             this.SPEAKER.add_hitbox(4,[[11,1,11,27],[1,8,10,10]]);
+			
+			// DRONE
+			this.DRONE = new frame('DRONE', IMAGE.FILES.OBSTACLE, SPEED.ANIMATION.OBSTACLE);
             
             this.list = [this.CAMERA, this.SPEAKER];
         }
@@ -238,6 +241,8 @@ function frame(name, image, speed, options) {
         width: 0,
         height: 0
     };
+	
+	// Options
 	if (options === undefined) {
 		options = {};
 	}
@@ -246,6 +251,14 @@ function frame(name, image, speed, options) {
 	}
 	this.orientation = options.orientation;
 //	this.orientation = typeof orientation !== 'undefined' ? orientation: "forward"
+	this.motion_settings = {
+		rotation: 0,
+		rotation_time: 0,
+		trans_x : 0,
+		trans_x_time: 0,
+		trans_y: 0,
+		trans_y_time: 0
+	};
     
     // Initiate animation
     this.nb_max_tiles = 0;
@@ -306,39 +319,76 @@ function frame(name, image, speed, options) {
     this.set_speed = function(rate) {
         this.speed = this.default_speed * rate;
     };
-    this.draw = function(ctx, num_tile, x, y) {
+	this.before_draw = function(ctx, num_tile, x, y) {
+		if (this.motion) {
+			this.motion();
+		}
+		ctx.save();
 		if (this.orientation == "backward") {
-			ctx.save();
-			ctx.scale(-1,1)
-			ctx.drawImage(this.image,
-                      this.tiles[num_tile-1].x,
-                      this.tiles[num_tile-1].y,
-                      this.tiles[num_tile-1].width,
-                      this.tiles[num_tile-1].height,
-                      - x,
-                      y - this.reference.height,
-                      - this.tiles[num_tile-1].width,
-                      this.tiles[num_tile-1].height);
-			ctx.restore();
+			ctx.scale(-1,1);
+			this.draw(ctx, num_tile, -x, y, -1, 1);
+		} else {
+			this.draw(ctx, num_tile, x, y, 1, 1);
 		}
-		else {
-			ctx.save();
-			ctx.drawImage(this.image,
-                      this.tiles[num_tile-1].x,
-                      this.tiles[num_tile-1].y,
-                      this.tiles[num_tile-1].width,
-                      this.tiles[num_tile-1].height,
-                      x,
-                      y - this.reference.height,
-                      this.tiles[num_tile-1].width,
-                      this.tiles[num_tile-1].height);
-			ctx.restore();
-		}
+		ctx.restore();
+	};
+	this.draw = function(ctx, num_tile, x, y, sw, sh) {
+		var radians = this.motion_settings.rotation * Math.PI / 180;
+		var tile = this.tiles[num_tile - 1];
+		ctx.rotate(radians);
+		var X = x + sw * tile.width / 2;
+		var Y = y + sh * tile.height / 2;
+		ctx.translate(X * Math.cos(radians) + Y * Math.sin(radians) - X,
+					  Y * Math.cos(radians) - X * Math.sin(radians) - Y);
+		ctx.drawImage(this.image,
+					  tile.x,
+					  tile.y,
+					  tile.width,
+					  tile.height,
+					  x,
+					  y,
+					  sw * tile.width,
+					  sh * tile.height);
 		
-        if (this.hitbox_visible) {
-            this.draw_hitbox(ctx, num_tile, x, y);
-        }
-    };
+		if (this.hitbox_visible) {
+			this.draw_hitbox(ctx, num_tile, x, y);
+		}
+	};
+	
+	
+//    this.draw = function(ctx, num_tile, x, y) {
+//		if (this.orientation == "backward") {
+//			ctx.save();
+//			ctx.scale(-1,1)
+//			ctx.drawImage(this.image,
+//                      this.tiles[num_tile-1].x,
+//                      this.tiles[num_tile-1].y,
+//                      this.tiles[num_tile-1].width,
+//                      this.tiles[num_tile-1].height,
+//                      - x,
+//                      y - this.reference.height,
+//                      - this.tiles[num_tile-1].width,
+//                      this.tiles[num_tile-1].height);
+//			ctx.restore();
+//		}
+//		else {
+//			ctx.save();
+//			ctx.drawImage(this.image,
+//                      this.tiles[num_tile-1].x,
+//                      this.tiles[num_tile-1].y,
+//                      this.tiles[num_tile-1].width,
+//                      this.tiles[num_tile-1].height,
+//                      x,
+//                      y - this.reference.height,
+//                      this.tiles[num_tile-1].width,
+//                      this.tiles[num_tile-1].height);
+//			ctx.restore();
+//		}
+//		
+//        if (this.hitbox_visible) {
+//            this.draw_hitbox(ctx, num_tile, x, y);
+//        }
+//    };
     this.draw_hitbox = function(ctx, num_tile, x, y) {
         for (var i = 0 ; i < this.tiles[num_tile-1].box.length ; i++) {
             var box = this.tiles[num_tile-1].box[i];
@@ -392,9 +442,10 @@ function frame(name, image, speed, options) {
 		if (this.orientation == 'forward') {this.orientation = "backward";}
 		else {this.orientation = "forward";}
 	}
+	this.motion = options.motion;
 }
 
-function calque(ctx, frame, x, y) {
+function calque(ctx, frame, x, y, options) {
     
     // Parameters
     this.ctx = ctx;
@@ -409,6 +460,7 @@ function calque(ctx, frame, x, y) {
 	} else {
 		this.current_tile = getRandom(1,this.frame.nb_max_tiles);
 	}
+	
     // Methods
     this.animate = function(fps) {
         var velocity = Math.trunc(fps / this.frame.speed);  // frame/image
@@ -420,7 +472,7 @@ function calque(ctx, frame, x, y) {
                 this.current_tile = 1;
             }
         }
-        this.frame.draw(this.ctx, this.current_tile, this.position.x, this.position.y);
+        this.frame.before_draw(this.ctx, this.current_tile, this.position.x, this.position.y);
 		if (this.frame.tiles[this.current_tile-1].type != "loop") {
 			this.frame.nb_max_tiles--;
 			this.frame.first_tile++;
@@ -525,7 +577,7 @@ function layer(ctx, frame_list, speed, is_continuous, likelihood, nb_blocked, fu
         this.fill_screen();
         for (var i = 0 ; i < this.calque_list.length; i++) {
             var e = this.calque_list[i];
-            e.frame.draw(this.ctx, 1, e.position.x, e.position.y)
+            e.frame.before_draw(this.ctx, 1, e.position.x, e.position.y)
         }
     }
     this.set_speed = function(rate) {
