@@ -61,7 +61,7 @@ var IMAGE = {
 		}
 		if (!fail) {
 			BACKGROUND.run(GAME.START_FPS);
-			PLAYER.RUN.FRAME.before_draw(CONTEXT.MACRON, 1, POSITION.player_offset_x, POSITION.get_ground());
+			PLAYER.RUN.FRAME.before_draw(CONTEXT.MACRON, 1, SETTINGS.OFFSET.X.PLAYER, SETTINGS.OFFSET.HEIGHT.get_ground());
 			return
 		}
 		window.setTimeout(this.process, 50);
@@ -84,83 +84,78 @@ var AUDIO = {
 }
 
 // SETTINGS
-var SPEED = {
-    ANIMATION: {
-        JUMP:   8,      // img/s
-        RUN:    4,      // img/s
-        OBSTACLE: 4,    // img/s
-		DRONE: 24		// img/s
-    },
-    MOTION: {
-        GROUND: -150,   // PX/s
-        SKY: -5,        // PX/s
-        OBSTACLE: -20,  // PX/s
-    }
-};
-
-var POSITION = {
-    player_offset_x: 0.1*WIDTH,
-    get_ground: function() {
-        return 0.8*HEIGHT;
-    },
-    get_sky: function() {
-        return getRandom(0.2*HEIGHT, 0.4*HEIGHT);
-    },
-    get_people: function() {
-        return POSITION.get_ground() - HEIGHT * 0.02;
-    },
-	get_flying_obs: function() {
-		if (Math.random() > 0.5) {
-			var h = 15;
-		} else {
-			var h = 60;
-		}
-		return POSITION.get_ground() - HEIGHT * 0.02 - h;
-	}
-};
-
 var SETTINGS = {
-    PLAYER: {
-        JUMP_HEIGHT: 50,    // pixels
-        JUMP_TIME: 0.6      // secondes
-    },
-    OBSTACLE: {
-        NB_PIXEL_BLOCKED: 15,   // pixel
-        GAP_COEFF: 0.9,
-        WIDTH_COEFF: 0.4,
-        GENERATOR_COEFF: 0.05,
-        NB_OBS_MAX: 5,
-		FLYING_OBS_LIKELIHOOD: 0.2,
-		FLYING_OBS_SCORE: 400,
-		FLYING_HEIGHT: 50,
-		motion_flying: function() {
-			if (this.position.y > POSITION.get_ground() - HEIGHT * 0.02 - 30) {
-				return
-			}
-			this.position.time++;
-			if (this.position.time > 60) {
-				this.position.time = 1;
-			}
-			if (this.position.time < 30) {
-				this.position.y--;
-			} else {
-				this.position.y++;
-			}
+	SPEED: {
+		ANIMATION: {
+			RUN: 4,		// img/s
+			JUMP: 8,	// img/s
+			OBS: 4,		// img/s
+			DRONE: 24	// img/s
+		},
+		MOTION: {
+			GROUND: -150,	// PX/s
+			SKY: -5,		// PX/s
+			OBS: -20		// PX/s
 		}
-    },
-	SCORE: {
-		MIN_PER_FRAME: 0.1281,
-		MAX_PER_FRAME: 0.325,
-		ACC: 0.00005
+	},
+	OFFSET: {
+		HEIGHT: {
+			get_ground: function() {return 0.8 * HEIGHT;},
+			get_sky: function() {return getRandom(0.2*HEIGHT, 0.4*HEIGHT);},
+			get_people: function() {return this.get_ground() - 0.02 * HEIGHT;},
+			get_drone: function() {
+				if (Math.random > p) {p++;}
+			}
+		},
+		X: {
+			PLAYER: 0.1 * WIDTH
+		}
+	},
+	PARAMETERS: {
+		JUMP: {
+			init: function() {
+				this.HEIGHT = 50;
+				this.TIME = 0.6;
+			}
+		},
+		OBS: {
+			init: function() {
+				this.PX_TO_BLOCK = 15;
+				this.GAP_COEFF = 0.9;
+				this.WIDTH_COEFF = 0.4;
+				this.GENERATOR_COEFF = 0.05;
+				this.NB_OBS_MAX = 5;
+				this.FLYING = {
+					LIKELIHOOD: 0.2,
+					SCORE_MIN: 400
+				};
+			}
+		},
+		SCORE: {
+			init: function() {
+				this.MIN_PER_FRAME = 0.1281;
+				this.MAX_PER_FRAME = 0.325;
+				this.ACC = 0.00005;
+				this.SCORE_BEFORE_TRANSLATION = 1000;
+			}
+		},
+		init: function() {
+			this.JUMP.init();
+			this.OBS.init();
+			this.SCORE.init();
+		}
+	},
+	init: function() {
+		this.PARAMETERS.init();
 	}
-}
+};
 
 // FRAMES
 var FRAMES = {
     PLAYER: {
         init: function() {
             // RUN
-			this.RUN = new frame('RUN', IMAGE.FILES.PLAYER, SPEED.ANIMATION.RUN);
+			this.RUN = new frame('RUN', IMAGE.FILES.PLAYER, SETTINGS.SPEED.ANIMATION.RUN);
             this.RUN.add_tile(0,0,19,38);
             this.RUN.add_hitbox(1,[[4,2,12,21],[5,21,7,18]]);
             this.RUN.add_tile(21,0,19,38);
@@ -171,7 +166,7 @@ var FRAMES = {
             this.RUN.add_hitbox(4,[[4,2,12,21],[5,21,11,18]]);
             
             // JUMP
-			this.JUMP = new frame('JUMP', IMAGE.FILES.PLAYER, SPEED.ANIMATION.JUMP);
+			this.JUMP = new frame('JUMP', IMAGE.FILES.PLAYER, SETTINGS.SPEED.ANIMATION.JUMP);
             this.JUMP.add_tile(84,0,20,38);
             this.JUMP.add_hitbox(1,[[2,0,13,21],[5,22,10,6]]);
             this.JUMP.add_tile(105,0,20,38);
@@ -183,7 +178,7 @@ var FRAMES = {
     OBSTACLE: {
         init: function() {
             // CAMERA
-			this.CAMERA = new frame('CAMERA', IMAGE.FILES.OBSTACLE, SPEED.ANIMATION.OBSTACLE);
+			this.CAMERA = new frame('CAMERA', IMAGE.FILES.OBSTACLE, SETTINGS.SPEED.ANIMATION.OBS);
             this.CAMERA.add_tile(0,0,22,30);
             this.CAMERA.add_hitbox(1,[[2,1,16,10]]);
             this.CAMERA.add_tile(23,0,22,30);
@@ -194,7 +189,7 @@ var FRAMES = {
             this.CAMERA.add_hitbox(4,[[2,1,16,10]]);
             
             // SPEAKER
-			this.SPEAKER = new frame('SPEAKER', IMAGE.FILES.OBSTACLE, SPEED.ANIMATION.OBSTACLE);
+			this.SPEAKER = new frame('SPEAKER', IMAGE.FILES.OBSTACLE, SETTINGS.SPEED.ANIMATION.OBS);
             this.SPEAKER.add_tile(0,31,22,32);
             this.SPEAKER.add_hitbox(1,[[11,5,11,27],[1,8,10,10]]);
             this.SPEAKER.add_tile(23,31,22,32);
@@ -205,7 +200,7 @@ var FRAMES = {
             this.SPEAKER.add_hitbox(4,[[11,1,11,27],[1,8,10,10]]);
 			
 			// DRONE
-			this.DRONE = new frame('DRONE', IMAGE.FILES.OBSTACLE, SPEED.ANIMATION.DRONE);
+			this.DRONE = new frame('DRONE', IMAGE.FILES.OBSTACLE, SETTINGS.SPEED.ANIMATION.DRONE);
 			this.DRONE.add_tile(0,64,32,16);
 			this.DRONE.add_hitbox(1,[[8,4,18,5]]);
 			this.DRONE.add_tile(33,64,32,16);

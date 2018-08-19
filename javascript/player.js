@@ -1,12 +1,6 @@
 var PLAYER = {
-    OFFSET: {
-        x: POSITION.player_offset_x,
-        y: POSITION.get_people()
-    },
     JUMP:  {
-        STATUS: false,
-        JUMP_TIME: SETTINGS.PLAYER.JUMP_TIME,
-        MAX_HEIGHT: SETTINGS.PLAYER.JUMP_HEIGHT,  
+        STATUS: false
     },
     RUN: {
         STATUS: true,
@@ -15,7 +9,13 @@ var PLAYER = {
         // Context
         this.CONTEXT = ctx;
 		this.RUNNING_SIDE = "forward";
-        
+		
+		// PLAYER OFFSET
+		this.OFFSET = {
+			x: SETTINGS.OFFSET.X.PLAYER,
+			y: SETTINGS.OFFSET.HEIGHT.get_people()
+		};
+		
         // Frames & Calques
         this.JUMP.FRAME = FRAMES.PLAYER.JUMP;
         this.JUMP.CALQUE = new calque(this.CONTEXT, this.JUMP.FRAME, this.OFFSET.x, this.OFFSET.y);
@@ -25,6 +25,8 @@ var PLAYER = {
         
         // Jump settings
         this.HEIGHT = 0;
+		this.JUMP.JUMP_TIME = SETTINGS.PARAMETERS.JUMP.TIME;
+		this.JUMP.MAX_HEIGHT = SETTINGS.PARAMETERS.JUMP.HEIGHT;
         this.JUMP.ACCELERATION = - 8 * this.JUMP.MAX_HEIGHT / Math.pow(this.JUMP.JUMP_TIME, 2);
         this.JUMP.VELOCITY = 4 * this.JUMP.MAX_HEIGHT / this.JUMP.JUMP_TIME;
         this.JUMP.TIME = 0;

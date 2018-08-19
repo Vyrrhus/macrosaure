@@ -22,7 +22,7 @@ var SCORE = {
         // Scores
         this.SCORE = 0;
 		this.DATE_INIT = new Date();
-		this.SPEED = SETTINGS.SCORE.MIN_PER_FRAME
+		this.SPEED = SETTINGS.PARAMETERS.SCORE.MIN_PER_FRAME
         this.NB_TRY++;
         
         CONTEXT.TEXT.clearRect(0,0,WIDTH,HEIGHT);
@@ -31,8 +31,8 @@ var SCORE = {
 	set_score: function() {
 		this.SCORE += this.SPEED;
 		this.EVENT += this.SPEED;
-		if (this.SPEED < SETTINGS.SCORE.MAX_PER_FRAME) {
-			this.SPEED += SETTINGS.SCORE.ACC;
+		if (this.SPEED < SETTINGS.PARAMETERS.SCORE.MAX_PER_FRAME) {
+			this.SPEED += SETTINGS.PARAMETERS.SCORE.ACC;
 		}
 		this.DATE = new Date(this.DATE_INIT.getFullYear(), this.DATE_INIT.getMonth(), this.DATE_INIT.getDate() + Math.floor(this.SCORE/2));
 		switch (this.MODE) {
@@ -47,7 +47,7 @@ var SCORE = {
 		}
 	},
 	get_rate: function() {
-		return this.SPEED / SETTINGS.SCORE.MIN_PER_FRAME;
+		return this.SPEED / SETTINGS.PARAMETERS.SCORE.MIN_PER_FRAME;
 	},
     draw_chiffre: function(chiffre, x, y) {
         chiffre = parseInt(chiffre);

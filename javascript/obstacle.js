@@ -1,5 +1,5 @@
 var OBSTACLES = {
-    VELOCITY: SPEED.MOTION.OBSTACLE + SPEED.MOTION.GROUND,
+    VELOCITY: SETTINGS.SPEED.MOTION.OBS + SETTINGS.SPEED.MOTION.GROUND,
     init: function(ctx) {
         // Context
         this.CONTEXT = ctx;
@@ -11,7 +11,7 @@ var OBSTACLES = {
         
         // Initialize other useful settings
 		this.RUNNING_SIDE = "forward";
-		this.NB_OBS_MAX = SETTINGS.OBSTACLE.NB_OBS_MAX;
+		this.NB_OBS_MAX = SETTINGS.PARAMETERS.OBS.NB_OBS_MAX;
         this.NB_CURRENT_OBS = 0;
         this.set_gap();
         this.CURRENT_GAP = 0;
@@ -22,8 +22,8 @@ var OBSTACLES = {
         };
     },
     set_gap: function() {
-        this.GAP_MIN = - this.VELOCITY * SETTINGS.OBSTACLE.GAP_COEFF * SETTINGS.PLAYER.JUMP_TIME;
-        this.WIDTH_MAX = - this.VELOCITY * SETTINGS.OBSTACLE.WIDTH_COEFF * SETTINGS.PLAYER.JUMP_TIME;
+        this.GAP_MIN = - this.VELOCITY * SETTINGS.PARAMETERS.OBS.GAP_COEFF * SETTINGS.PARAMETERS.JUMP.TIME;
+        this.WIDTH_MAX = - this.VELOCITY * SETTINGS.PARAMETERS.OBS.WIDTH_COEFF * SETTINGS.PARAMETERS.JUMP.TIME;
     },
     
     run: function(fps) {
@@ -53,16 +53,16 @@ var OBSTACLES = {
     },
     add_obstacle: function() {
         var p = Math.random();
-        if (p > 1 - SETTINGS.OBSTACLE.GENERATOR_COEFF || this.NB_CURRENT_OBS == 0) {
+        if (p > 1 - SETTINGS.PARAMETERS.OBS.GENERATOR_COEFF || this.NB_CURRENT_OBS == 0) {
             this.CURRENT_GAP = 0;
 			
-			if (Math.random() > 1 - SETTINGS.OBSTACLE.FLYING_OBS_LIKELIHOOD && SCORE.SCORE > SETTINGS.OBSTACLE.FLYING_OBS_SCORE) {
+			if (Math.random() > 1 - SETTINGS.PARAMETERS.OBS.FLYING.LIKELIHOOD && SCORE.SCORE > SETTINGS.PARAMETERS.OBS.FLYING.SCORE) {
 				var num = getRandom(1, this.NB_FLYING_OBS);
 				if (this.RUNNING_SIDE == "forward") {
-					var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list_flying[num-1], WIDTH, POSITION.get_flying_obs(), {motion: SETTINGS.OBSTACLE.motion_flying});
+					var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list_flying[num-1], WIDTH, SETTINGS.OFFSET.HEIGHT.get_drone(), {motion: function() {this.position.angle++;}});
 					obstacle.frame.orientation = 'forward';
 				} else {
-					var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list_flying[num-1], 0, POSITION.get_flying_obs(), {motion: SETTINGS.OBSTACLE.motion_flying});
+					var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list_flying[num-1], 0, SETTINGS.OFFSET.HEIGHT.get_drone(), {motion: function() {this.position.angle++;}});
 					obstacle.frame.orientation = 'backward';
 				}
 				this.CURRENT_GAP -= obstacle.frame.reference.width;
@@ -75,10 +75,10 @@ var OBSTACLES = {
 				for (var i = 1 ; i <= nb_obstacle ; i++) {
                 	var num = getRandom(1, this.NB_OBS);
 					if (this.RUNNING_SIDE == "forward") {
-						var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list[num-1], WIDTH + obstacle_width, POSITION.get_people());
+						var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list[num-1], WIDTH + obstacle_width, SETTINGS.OFFSET.HEIGHT.get_people());
 						obstacle.frame.orientation = 'forward';
 					} else {
-						var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list[num-1], 0 - obstacle_width, POSITION.get_people());
+						var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list[num-1], 0 - obstacle_width, SETTINGS.OFFSET.HEIGHT.get_people());
 						obstacle.frame.orientation = 'backward';
 					}
 					obstacle_width += obstacle.frame.reference.width;
@@ -92,11 +92,11 @@ var OBSTACLES = {
 				}
 			}
         } else {
-            this.CURRENT_BLOCKED = SETTINGS.OBSTACLE.NB_PIXEL_BLOCKED;
+            this.CURRENT_BLOCKED = SETTINGS.PARAMETERS.OBS.PX_TO_BLOCK;
         }
     },
     set_difficulty: function() {
-        this.VELOCITY = SPEED.MOTION.GROUND * SCORE.get_rate() + SPEED.MOTION.OBSTACLE;
+        this.VELOCITY = SETTINGS.SPEED.MOTION.GROUND * SCORE.get_rate() + SETTINGS.SPEED.MOTION.OBS;
         this.set_gap();
         var rate_animation = 1 + 2.2*Math.tanh(SCORE.SCORE/1500);
         for (var i = 0 ; i < this.NB_OBS ; i++) {

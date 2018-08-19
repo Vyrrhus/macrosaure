@@ -18,6 +18,7 @@ var GAME = {
     init: function() {
 		IMAGE.init();
 		AUDIO.init();
+		SETTINGS.init();
         FRAMES.init();
         BACKGROUND.init(CONTEXT.BACKGROUND);
         OBSTACLES.init(CONTEXT.OBSTACLE);
@@ -90,7 +91,7 @@ var GAME = {
 			this.collision();
 		}
 		
-		if (SCORE.SCORE > 1000 && PLAYER.OFFSET.x < WIDTH / 2.5) {
+		if (SCORE.SCORE > SETTINGS.PARAMETERS.SCORE.SCORE_BEFORE_TRANSFORMATION && PLAYER.OFFSET.x < WIDTH / 2.5) {
 			this.MODE = 'TRANSLATION';
 		} else {
 			this.MODE = 'NORMAL'
@@ -158,6 +159,7 @@ var GAME = {
     reset: function() {
         this.STATE.GAME_OVER = false;
         this.LAST_TIME = 0;
+		SETTINGS.init();
         PLAYER.reset();
         OBSTACLES.reset();
         SCORE.reset();

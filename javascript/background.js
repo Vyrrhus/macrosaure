@@ -6,8 +6,8 @@ var BACKGROUND = {
         
         // Layers
         this.LAYERS = [];
-        var GROUND = new layer(this.CONTEXT, FRAMES.BACKGROUND.list_ground, SPEED.MOTION.GROUND, true, 1, 0, POSITION.get_ground);
-        var SKY = new layer(this.CONTEXT, FRAMES.BACKGROUND.list_sky, SPEED.MOTION.SKY, false, 0.1, 100, POSITION.get_sky);
+        var GROUND = new layer(this.CONTEXT, FRAMES.BACKGROUND.list_ground, SETTINGS.SPEED.MOTION.GROUND, true, 1, 0, SETTINGS.OFFSET.HEIGHT.get_ground);
+        var SKY = new layer(this.CONTEXT, FRAMES.BACKGROUND.list_sky, SETTINGS.SPEED.MOTION.SKY, false, 0.1, 100, SETTINGS.OFFSET.HEIGHT.get_sky);
         this.LAYERS.push(GROUND, SKY);
     },
     
