@@ -89,7 +89,7 @@ var SPEED = {
         JUMP:   8,      // img/s
         RUN:    4,      // img/s
         OBSTACLE: 4,    // img/s
-		DRONE: 30		// img/s
+		DRONE: 24		// img/s
     },
     MOTION: {
         GROUND: -150,   // PX/s
@@ -110,7 +110,12 @@ var POSITION = {
         return POSITION.get_ground() - HEIGHT * 0.02;
     },
 	get_flying_obs: function() {
-		return POSITION.get_ground() - HEIGHT * 0.02 - SETTINGS.OBSTACLE.FLYING_HEIGHT;
+		if (Math.random() > 0.5) {
+			var h = 15;
+		} else {
+			var h = 60;
+		}
+		return POSITION.get_ground() - HEIGHT * 0.02 - h;
 	}
 };
 
@@ -125,10 +130,22 @@ var SETTINGS = {
         WIDTH_COEFF: 0.4,
         GENERATOR_COEFF: 0.05,
         NB_OBS_MAX: 5,
-		FLYING_OBS_LIKELIHOOD: 1,
+		FLYING_OBS_LIKELIHOOD: 0.2,
+		FLYING_OBS_SCORE: 400,
 		FLYING_HEIGHT: 50,
 		motion_flying: function() {
-			
+			if (this.position.y > POSITION.get_ground() - HEIGHT * 0.02 - 30) {
+				return
+			}
+			this.position.time++;
+			if (this.position.time > 60) {
+				this.position.time = 1;
+			}
+			if (this.position.time < 30) {
+				this.position.y--;
+			} else {
+				this.position.y++;
+			}
 		}
     },
 	SCORE: {
@@ -269,14 +286,6 @@ function frame(name, image, speed, options) {
 	}
 	this.orientation = options.orientation;
 //	this.orientation = typeof orientation !== 'undefined' ? orientation: "forward"
-	this.motion_settings = {
-		rotation: 0,
-		rotation_time: 0,
-		trans_x : 0,
-		trans_x_time: 0,
-		trans_y: 0,
-		trans_y_time: 0
-	};
     
     // Initiate animation
     this.nb_max_tiles = 0;
@@ -338,28 +347,32 @@ function frame(name, image, speed, options) {
     this.set_speed = function(rate) {
         this.speed = this.default_speed * rate;
     };
-	this.before_draw = function(ctx, num_tile, x, y) {
-		if (this.motion) {
-			this.motion();
+	this.before_draw = function(ctx, num_tile, x, y, angle) {
+		if (angle) {
 			for (var element in this.tiles[num_tile - 1].box) {
-				this.tiles[num_tile - 1].box[element].rotation = this.motion_settings.rotation;
+				this.tiles[num_tile - 1].box[element].rotation = angle;
 			}
 		}
 		ctx.save();
 		if (this.orientation == "backward") {
 			ctx.scale(-1,1);
-			this.draw(ctx, num_tile, -x, y, -1, 1);
+			this.draw(ctx, num_tile, -x, y, angle, false);
 		} else {
-			this.draw(ctx, num_tile, x, y, 1, 1);
+			this.draw(ctx, num_tile, x, y, angle, true);
 		}
 		ctx.restore();
 	};
-	this.draw = function(ctx, num_tile, x, y, sw, sh) {
-		var radians = this.motion_settings.rotation * Math.PI / 180;
+	this.draw = function(ctx, num_tile, x, y, angle, is_forward) {
+		var radians = angle * Math.PI / 180;
 		var tile = this.tiles[num_tile - 1];
 		ctx.rotate(radians);
-		var X = x + sw * tile.width / 2;
-		var Y = y - this.reference.height + sh * tile.height / 2;
+		if (is_forward) {
+			var coeff = 1;
+		} else {
+			var coeff = -1;
+		}
+		var X = x + coeff * tile.width / 2;
+		var Y = y - this.reference.height + tile.height / 2;
 		ctx.translate(X * Math.cos(radians) + Y * Math.sin(radians) - X,
 					  Y * Math.cos(radians) - X * Math.sin(radians) - Y);
 		ctx.drawImage(this.image,
@@ -369,48 +382,13 @@ function frame(name, image, speed, options) {
 					  tile.height,
 					  x,
 					  y - this.reference.height,
-					  sw * tile.width,
-					  sh * tile.height);
+					  coeff * tile.width,
+					  tile.height);
 		
 		if (this.hitbox_visible) {
 			this.draw_hitbox(ctx, num_tile, x, y);
 		}
 	};
-	
-	
-//    this.draw = function(ctx, num_tile, x, y) {
-//		if (this.orientation == "backward") {
-//			ctx.save();
-//			ctx.scale(-1,1)
-//			ctx.drawImage(this.image,
-//                      this.tiles[num_tile-1].x,
-//                      this.tiles[num_tile-1].y,
-//                      this.tiles[num_tile-1].width,
-//                      this.tiles[num_tile-1].height,
-//                      - x,
-//                      y - this.reference.height,
-//                      - this.tiles[num_tile-1].width,
-//                      this.tiles[num_tile-1].height);
-//			ctx.restore();
-//		}
-//		else {
-//			ctx.save();
-//			ctx.drawImage(this.image,
-//                      this.tiles[num_tile-1].x,
-//                      this.tiles[num_tile-1].y,
-//                      this.tiles[num_tile-1].width,
-//                      this.tiles[num_tile-1].height,
-//                      x,
-//                      y - this.reference.height,
-//                      this.tiles[num_tile-1].width,
-//                      this.tiles[num_tile-1].height);
-//			ctx.restore();
-//		}
-//		
-//        if (this.hitbox_visible) {
-//            this.draw_hitbox(ctx, num_tile, x, y);
-//        }
-//    };
     this.draw_hitbox = function(ctx, num_tile, x, y) {
         for (var i = 0 ; i < this.tiles[num_tile-1].box.length ; i++) {
             var box = this.tiles[num_tile-1].box[i];
@@ -464,16 +442,16 @@ function frame(name, image, speed, options) {
 		if (this.orientation == 'forward') {this.orientation = "backward";}
 		else {this.orientation = "forward";}
 	}
-	this.motion = options.motion;
 }
 
 function calque(ctx, frame, x, y, options) {
-    
     // Parameters
     this.ctx = ctx;
     this.position = {
         x: x,
-        y: y
+        y: y,
+		angle: 0,
+		time: 0
     };
     this.nb_frame = 0;
     this.frame = frame;
@@ -481,6 +459,9 @@ function calque(ctx, frame, x, y, options) {
 		this.current_tile = 1;
 	} else {
 		this.current_tile = getRandom(1,this.frame.nb_max_tiles);
+	}
+	if (options === undefined) {
+		options = {};
 	}
 	
     // Methods
@@ -494,12 +475,15 @@ function calque(ctx, frame, x, y, options) {
                 this.current_tile = 1;
             }
         }
-        this.frame.before_draw(this.ctx, this.current_tile, this.position.x, this.position.y);
+		if (this.motion) {
+			this.motion();
+		}
+        this.frame.before_draw(this.ctx, this.current_tile, this.position.x, this.position.y, this.position.angle);
 		if (this.frame.tiles[this.current_tile-1].type != "loop") {
 			this.frame.nb_max_tiles--;
 			this.frame.first_tile++;
 		}
-    }
+    };
     this.set_position = function(x, y) {
         this.position.x = x;
         this.position.y = y;
@@ -507,7 +491,7 @@ function calque(ctx, frame, x, y, options) {
     this.translate = function(transX, transY) {
         this.position.x += transX;
         this.position.y += transY;
-    }
+    };
     this.is_onscreen = function() {
 		if (this.frame.orientation == "forward") {
 			if (this.position.x + this.frame.reference.width < 0) {
@@ -522,10 +506,12 @@ function calque(ctx, frame, x, y, options) {
 				return true;
 			}
 		}
-    }
+    };
 	this.get_hitbox = function() {
 		return this.frame.get_hitbox(this.current_tile, this.position.x, this.position.y);
-	}
+	};
+	this.motion = options.motion;
+	
 }
 
 function layer(ctx, frame_list, speed, is_continuous, likelihood, nb_blocked, func_offset_y) {

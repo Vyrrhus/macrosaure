@@ -56,13 +56,13 @@ var OBSTACLES = {
         if (p > 1 - SETTINGS.OBSTACLE.GENERATOR_COEFF || this.NB_CURRENT_OBS == 0) {
             this.CURRENT_GAP = 0;
 			
-			if (Math.random() > 1 - SETTINGS.OBSTACLE.FLYING_OBS_LIKELIHOOD) {
+			if (Math.random() > 1 - SETTINGS.OBSTACLE.FLYING_OBS_LIKELIHOOD && SCORE.SCORE > SETTINGS.OBSTACLE.FLYING_OBS_SCORE) {
 				var num = getRandom(1, this.NB_FLYING_OBS);
 				if (this.RUNNING_SIDE == "forward") {
-					var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list_flying[num-1], WIDTH, POSITION.get_flying_obs());
+					var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list_flying[num-1], WIDTH, POSITION.get_flying_obs(), {motion: SETTINGS.OBSTACLE.motion_flying});
 					obstacle.frame.orientation = 'forward';
 				} else {
-					var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list_flying[num-1], 0, POSITION.get_flying_obs());
+					var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list_flying[num-1], 0, POSITION.get_flying_obs(), {motion: SETTINGS.OBSTACLE.motion_flying});
 					obstacle.frame.orientation = 'backward';
 				}
 				this.CURRENT_GAP -= obstacle.frame.reference.width;
