@@ -6,6 +6,7 @@ var OBSTACLES = {
         
         // Frames & Calques
         this.NB_OBS = FRAMES.OBSTACLE.list.length;
+		this.NB_FLYING_OBS = FRAMES.OBSTACLE.list_flying.length;
         this.CALQUE = [];
         
         // Initialize other useful settings
@@ -54,31 +55,46 @@ var OBSTACLES = {
         var p = Math.random();
         if (p > 1 - SETTINGS.OBSTACLE.GENERATOR_COEFF || this.NB_CURRENT_OBS == 0) {
             this.CURRENT_GAP = 0;
-            var nb_obstacle = getRandom(1, this.NB_OBS_MAX);
-            var obstacle_width = 0;
-            for (var i = 1 ; i <= nb_obstacle ; i++) {
-                var num = getRandom(1, this.NB_OBS);
+			
+			if (Math.random() > 1 - SETTINGS.OBSTACLE.FLYING_OBS_LIKELIHOOD) {
+				var num = getRandom(1, this.NB_FLYING_OBS);
 				if (this.RUNNING_SIDE == "forward") {
-					var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list[num-1], WIDTH + obstacle_width, POSITION.get_people());
+					var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list_flying[num-1], WIDTH, POSITION.get_flying_obs());
 					obstacle.frame.orientation = 'forward';
 				} else {
-					var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list[num-1], 0 - obstacle_width, POSITION.get_people());
+					var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list_flying[num-1], 0, POSITION.get_flying_obs());
 					obstacle.frame.orientation = 'backward';
 				}
-				obstacle_width += obstacle.frame.reference.width;
-				if (obstacle_width >= this.WIDTH_MAX) {
-					return;
-                }
-                this.CURRENT_GAP -= obstacle.frame.reference.width;
-                this.CALQUE.push(obstacle);
-                this.NB_CURRENT_OBS++;
-                console.log(`+ OBS "${obstacle.frame.name}"`);
-            }
+				this.CURRENT_GAP -= obstacle.frame.reference.width;
+				this.CALQUE.push(obstacle);
+				this.NB_CURRENT_OBS++;
+				console.log(`+ OBS "${obstacle.frame.name}"`);
+			} else {
+				var nb_obstacle = getRandom(1, this.NB_OBS_MAX);
+				var obstacle_width = 0;
+				for (var i = 1 ; i <= nb_obstacle ; i++) {
+                	var num = getRandom(1, this.NB_OBS);
+					if (this.RUNNING_SIDE == "forward") {
+						var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list[num-1], WIDTH + obstacle_width, POSITION.get_people());
+						obstacle.frame.orientation = 'forward';
+					} else {
+						var obstacle = new calque(this.CONTEXT, FRAMES.OBSTACLE.list[num-1], 0 - obstacle_width, POSITION.get_people());
+						obstacle.frame.orientation = 'backward';
+					}
+					obstacle_width += obstacle.frame.reference.width;
+					if (obstacle_width >= this.WIDTH_MAX) {
+						return;
+                	}
+                	this.CURRENT_GAP -= obstacle.frame.reference.width;
+                	this.CALQUE.push(obstacle);
+                	this.NB_CURRENT_OBS++;
+                	console.log(`+ OBS "${obstacle.frame.name}"`);
+				}
+			}
         } else {
             this.CURRENT_BLOCKED = SETTINGS.OBSTACLE.NB_PIXEL_BLOCKED;
         }
     },
-    
     set_difficulty: function() {
         this.VELOCITY = SPEED.MOTION.GROUND * SCORE.get_rate() + SPEED.MOTION.OBSTACLE;
         this.set_gap();
@@ -92,11 +108,17 @@ var OBSTACLES = {
         for (var i = 0 ; i < this.NB_OBS ; i++) {
             FRAMES.OBSTACLE.list[i].switch_hitbox();
         }
+		for (var i = 0 ; i < this.NB_FLYING_OBS ; i++) {
+			FRAMES.OBSTACLE.list_flying[i].switch_hitbox();
+		}
     },
     toggle_hitbox: function() {
         for (var i = 0 ; i < this.NB_OBS ; i++) {
             FRAMES.OBSTACLE.list[i].toggle_hitbox();
         }
+		for (var i = 0 ; i < this.NB_FLYING_OBS ; i++) {
+			FRAMES.OBSTACLE.list_flying[i].toggle_hitbox();
+		}
     },
     
     // WIP

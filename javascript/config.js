@@ -88,7 +88,8 @@ var SPEED = {
     ANIMATION: {
         JUMP:   8,      // img/s
         RUN:    4,      // img/s
-        OBSTACLE: 4     // img/s
+        OBSTACLE: 4,    // img/s
+		DRONE: 30		// img/s
     },
     MOTION: {
         GROUND: -150,   // PX/s
@@ -107,7 +108,10 @@ var POSITION = {
     },
     get_people: function() {
         return POSITION.get_ground() - HEIGHT * 0.02;
-    }
+    },
+	get_flying_obs: function() {
+		return POSITION.get_ground() - HEIGHT * 0.02 - SETTINGS.OBSTACLE.FLYING_HEIGHT;
+	}
 };
 
 var SETTINGS = {
@@ -120,7 +124,12 @@ var SETTINGS = {
         GAP_COEFF: 0.9,
         WIDTH_COEFF: 0.4,
         GENERATOR_COEFF: 0.05,
-        NB_OBS_MAX: 5
+        NB_OBS_MAX: 5,
+		FLYING_OBS_LIKELIHOOD: 1,
+		FLYING_HEIGHT: 50,
+		motion_flying: function() {
+			
+		}
     },
 	SCORE: {
 		MIN_PER_FRAME: 0.1281,
@@ -134,7 +143,7 @@ var FRAMES = {
     PLAYER: {
         init: function() {
             // RUN
-			this.RUN = new frame('RUN', IMAGE.FILES.PLAYER, SPEED.ANIMATION.RUN, {motion: function() {this.motion_settings.rotation+=0.5;}});
+			this.RUN = new frame('RUN', IMAGE.FILES.PLAYER, SPEED.ANIMATION.RUN);
             this.RUN.add_tile(0,0,19,38);
             this.RUN.add_hitbox(1,[[4,2,12,21],[5,21,7,18]]);
             this.RUN.add_tile(21,0,19,38);
@@ -179,9 +188,18 @@ var FRAMES = {
             this.SPEAKER.add_hitbox(4,[[11,1,11,27],[1,8,10,10]]);
 			
 			// DRONE
-			this.DRONE = new frame('DRONE', IMAGE.FILES.OBSTACLE, SPEED.ANIMATION.OBSTACLE);
+			this.DRONE = new frame('DRONE', IMAGE.FILES.OBSTACLE, SPEED.ANIMATION.DRONE);
+			this.DRONE.add_tile(0,64,32,16);
+			this.DRONE.add_hitbox(1,[[8,4,18,5]]);
+			this.DRONE.add_tile(33,64,32,16);
+			this.DRONE.add_hitbox(2,[[8,4,18,5]]);
+			this.DRONE.add_tile(66,64,32,16);
+			this.DRONE.add_hitbox(3,[[8,4,18,5]]);
+			this.DRONE.add_tile(99,64,32,16);
+			this.DRONE.add_hitbox(4,[[8,4,18,5]]);
             
             this.list = [this.CAMERA, this.SPEAKER];
+			this.list_flying = [this.DRONE];
         }
     },
     BACKGROUND: {
@@ -300,9 +318,10 @@ function frame(name, image, speed, options) {
     this.add_hitbox = function(num, box) {
         for (var i = 0 ; i < box.length ; i++) {
             var hitbox = {x:box[i][0],
-                          y:box[i][1],
-                          width:box[i][2],
-                          height:box[i][3]};
+						  y:box[i][1],
+						  width:box[i][2],
+						  height:box[i][3],
+						  rotation: 0};
             this.tiles[num-1].box.push(hitbox);
         }
     };
@@ -322,6 +341,9 @@ function frame(name, image, speed, options) {
 	this.before_draw = function(ctx, num_tile, x, y) {
 		if (this.motion) {
 			this.motion();
+			for (var element in this.tiles[num_tile - 1].box) {
+				this.tiles[num_tile - 1].box[element].rotation = this.motion_settings.rotation;
+			}
 		}
 		ctx.save();
 		if (this.orientation == "backward") {
@@ -337,7 +359,7 @@ function frame(name, image, speed, options) {
 		var tile = this.tiles[num_tile - 1];
 		ctx.rotate(radians);
 		var X = x + sw * tile.width / 2;
-		var Y = y + sh * tile.height / 2;
+		var Y = y - this.reference.height + sh * tile.height / 2;
 		ctx.translate(X * Math.cos(radians) + Y * Math.sin(radians) - X,
 					  Y * Math.cos(radians) - X * Math.sin(radians) - Y);
 		ctx.drawImage(this.image,
@@ -346,7 +368,7 @@ function frame(name, image, speed, options) {
 					  tile.width,
 					  tile.height,
 					  x,
-					  y,
+					  y - this.reference.height,
 					  sw * tile.width,
 					  sh * tile.height);
 		
