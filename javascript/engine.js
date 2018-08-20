@@ -24,6 +24,7 @@ var GAME = {
         OBSTACLES.init(CONTEXT.OBSTACLE);
         PLAYER.init(CONTEXT.MACRON);
         SCORE.init(CONTEXT.TEXT);
+		TEXT.init(CONTEXT.TEXT);
 		IMAGE.process();
     },
     start: function() {
@@ -101,6 +102,9 @@ var GAME = {
 		SCORE.set_score();
 		this.set_difficulty();
 		
+		// TEXT
+		TEXT.draw_text();
+		
 //		// SWITCH SIDE
 //		if (false) {
 //			OBSTACLES.NB_OBS_MAX = 0;
@@ -152,6 +156,7 @@ var GAME = {
 		BACKGROUND.run(this.FPS);
 		OBSTACLES.run(this.FPS);
 		PLAYER.run(this.FPS);
+		
 	},
     over: function() {
 		CONTEXT.TEXT.drawImage(IMAGE.FILES.GAME_OVER, 0, 0, 191, 56, WIDTH/2-115, HEIGHT/3,230,67);
