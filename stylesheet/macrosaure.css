@@ -22,4 +22,15 @@ body {position: fixed}
 
 #text {
     z-index: 3;
+	font-family: "test";
+}
+#load {
+	font-family: "test";
+	visibility: hidden;
+	height: 0px;
+}
+
+@font-face {
+	font-family: "test";
+	src: url('superstar.ttf');
 }
