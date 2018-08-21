@@ -34,7 +34,8 @@ var IMAGE = {
 		OBSTACLE: 'assets/obs.png',
 		GROUND: 'assets/ground.png',
 		SKY: 'assets/sky.png',
-		GAME_OVER: 'assets/over.png'
+		GAME_OVER: 'assets/over.png',
+		TEXT: 'assets/bubble.png'
 	},
 	init: function() {
 		var self = this;
@@ -104,7 +105,11 @@ var SETTINGS = {
 			get_sky: function() {return getRandom(0.2*HEIGHT, 0.4*HEIGHT);},
 			get_people: function() {return this.get_ground() - 0.02 * HEIGHT;},
 			get_drone: function() {
-				return this.get_people() - 60;
+				if (Math.random() > 1 -SETTINGS.PARAMETERS.OBS.FLYING.ON_GROUND_LIKELIHOOD) {
+					return this.get_people();
+				} else {
+					return this.get_people() - 60;
+				}
 			}
 		},
 		X: {
@@ -126,8 +131,9 @@ var SETTINGS = {
 				this.GENERATOR_COEFF = 0.05;
 				this.NB_OBS_MAX = 5;
 				this.FLYING = {
-					LIKELIHOOD: 1,
-					SCORE_MIN: 0
+					LIKELIHOOD: 0.2,
+					SCORE_MIN: 500,
+					ON_GROUND_LIKELIHOOD: 0.4
 				};
 			}
 		},
@@ -144,6 +150,15 @@ var SETTINGS = {
 			this.OBS.init();
 			this.SCORE.init();
 		}
+	},
+	TEXT: {
+		likelihood: 0.1,
+		content: ["C'est pas passe loin !",
+				  "Qu'ils viennent me chercher !",
+				  "On peut ralentir ?",
+				  "On peut discuter, non ?",
+				  "Ahah, trop facile !",
+				  "You are fake news !"]
 	},
 	init: function() {
 		this.PARAMETERS.init();

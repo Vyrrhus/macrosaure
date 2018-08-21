@@ -41,7 +41,6 @@ var PLAYER = {
         }
     },
     run_animate: function(fps) {
-		TEXT.reset_text();
 		this.RUN.CALQUE.set_position(this.OFFSET.x, this.OFFSET.y - this.HEIGHT)
         this.RUN.CALQUE.animate(fps);
     },
@@ -49,7 +48,6 @@ var PLAYER = {
         var height = 0;
         this.JUMP.TIME += 1 / fps; // x secondes par frame
         this.HEIGHT = Math.trunc(1/2 * this.JUMP.ACCELERATION * Math.pow(this.JUMP.TIME, 2) + this.JUMP.VELOCITY * this.JUMP.TIME);
-		TEXT.set_text("Qu'ils viennent me chercher !", 80, 80, 16);
         if (this.HEIGHT < 0) {
             this.HEIGHT = 0;
             this.JUMP.TIME = 0;
@@ -64,6 +62,7 @@ var PLAYER = {
         this.JUMP.STATUS = !this.JUMP.STATUS;
         this.RUN.STATUS = !this.RUN.STATUS;
 		if (this.JUMP.STATUS) {
+			TEXT.add_random(16, 20, SETTINGS.OFFSET.HEIGHT.get_people() - 100);
 		}
     },
     

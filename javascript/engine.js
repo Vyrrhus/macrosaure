@@ -103,7 +103,7 @@ var GAME = {
 		this.set_difficulty();
 		
 		// TEXT
-		TEXT.draw_text();
+		TEXT.animate(this.FPS);
 		
 //		// SWITCH SIDE
 //		if (false) {
@@ -156,7 +156,6 @@ var GAME = {
 		BACKGROUND.run(this.FPS);
 		OBSTACLES.run(this.FPS);
 		PLAYER.run(this.FPS);
-		
 	},
     over: function() {
 		CONTEXT.TEXT.drawImage(IMAGE.FILES.GAME_OVER, 0, 0, 191, 56, WIDTH/2-115, HEIGHT/3,230,67);
